@@ -1,4 +1,4 @@
-import { Schema } from "../types";
+import {Schema} from "../types";
 
 export const LoadFromFile = (file: File): Promise<Schema> => {
     return new Promise((resolve, reject) => {
@@ -17,6 +17,15 @@ export const LoadFromFile = (file: File): Promise<Schema> => {
     });
 };
 
-export const LoadString = (jsonString: string): Schema => {
+export const LoadFromString = (jsonString: string): Schema => {
     return JSON.parse(jsonString);
 }
+
+export const LoadFromUrl = (url: string): Promise<Schema> => {
+    return fetch(url)
+        .then((response) => response.json())
+        .then((json) => JSON.parse(json) as Schema);
+}
+
+
+

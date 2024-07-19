@@ -11,3 +11,12 @@ export interface FormProps<T = any, S extends StrictSchema = Schema> {
     schema: S;
     formData?: T;
 }
+
+export type FieldPath = {
+    $name: string;
+    $schema: Schema
+};
+
+export type PathSchema<T = any> = FieldPath & {
+    [key in keyof T]?: PathSchema<T[key]>;
+};
