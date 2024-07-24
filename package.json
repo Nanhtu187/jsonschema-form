@@ -1,7 +1,7 @@
 {
-  "name": "jsonschema-form",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@nanhtu/jsonschema-form",
+  "private": false,
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -21,6 +21,7 @@
     "@eslint/js": "^9.7.0",
     "@types/glob": "^8.1.0",
     "@types/lodash": "^4.17.6",
+    "lodash-es": "^4.17.21",
     "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
