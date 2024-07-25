@@ -1,22 +1,22 @@
 import { JSONSchema7 } from 'json-schema';
 
-
 export type GenericObjectType = {
-    [name: string]: any;
+  [name: string]: any;
 };
 export type StrictSchema = JSONSchema7;
 
 export type Schema = StrictSchema & GenericObjectType;
 export interface FormProps<T = any, S extends StrictSchema = Schema> {
-    schema: S;
-    formData?: T;
+  schema: S;
+  formData?: T;
+  onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
 }
 
 export type FieldPath = {
-    $name: string;
-    $schema: Schema
+  $name: string;
+  $schema: Schema;
 };
 
 export type PathSchema<T = any> = FieldPath & {
-    [key in keyof T]?: PathSchema<T[key]>;
+  [key in keyof T]?: PathSchema<T[key]>;
 };
