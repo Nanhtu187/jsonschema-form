@@ -1,49 +1,23 @@
 {
-  "$id": "https://example.com/person.schema.json",
+  "$id": "https://example.com/schemas/customer",
+  "type": "object",
   "properties": {
+    "first_name": {
+      "$ref": "#/$defs/name"
+    },
+    "last_name": {
+      "$ref": "#/$defs/name"
+    }
+  },
+  "required": [
+    "first_name",
+    "last_name",
+    "shipping_address",
+    "billing_address"
+  ],
+  "$defs": {
     "name": {
-      "type": "string",
-      "default": "Nguyen Anh Tu"
-    },
-    "age": {
-      "type": "number",
-      "default": 21
-    },
-    "test": {
-      "type": "object",
-      "properties": {
-        "test1": {
-          "type": "number",
-          "default": "12"
-        },
-        "test2": {
-          "type": "number"
-        }
-      }
-    },
-    "parents": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "default": "asdf"
-          },
-          "age": {
-            "type": "number"
-          }
-        }
-      }
-    },
-    "st": {
-      "type": "array",
-      "items": {
-        "type": "array",
-        "items": {
-          "type": "number"
-        }
-      }
+      "type": "number"
     }
   }
 }

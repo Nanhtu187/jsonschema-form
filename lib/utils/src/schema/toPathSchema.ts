@@ -1,18 +1,41 @@
 import { PathSchema, Schema, StrictSchema } from '../types.ts';
 import {
+  ALL_OF_KEY,
+  DEPENDENCIES_KEY,
   ITEMS_KEY,
   NAME_KEY,
   PROPERTIES_KEY,
+  REF_KEY,
   SCHEMA_KEY,
 } from '../constants.ts';
 import get from 'lodash/get';
+import { retrieveSchema } from './retrieveSchema.ts';
+import { isEqual } from 'lodash';
 
 function toPathSchemaInternal<T = any, S extends StrictSchema = Schema>(
   schema: S,
   name: string,
-  formData: T,
+  rootSchema?: S,
+  formData?: T,
+  _recurseList: S[] = [],
 ): PathSchema<T> {
-  const pathSchema = {
+  if (REF_KEY in schema || DEPENDENCIES_KEY in schema || ALL_OF_KEY in schema) {
+    const _schema = retrieveSchema<T, S>(schema, rootSchema, formData);
+    const sameSchemaIndex = _recurseList.findIndex((item) =>
+      isEqual(item, _schema),
+    );
+    if (sameSchemaIndex === -1) {
+      return toPathSchemaInternal<T, S>(
+        _schema,
+        name,
+        rootSchema,
+        formData,
+        _recurseList.concat(_schema),
+      );
+    }
+  }
+
+  let pathSchema = {
     [NAME_KEY]: name,
   } as PathSchema;
   pathSchema[SCHEMA_KEY] = schema;
@@ -24,7 +47,9 @@ function toPathSchemaInternal<T = any, S extends StrictSchema = Schema>(
           pathSchema[i] = toPathSchemaInternal<T, S>(
             schemaItems[i] as S,
             `${name}[${i}]`,
+            rootSchema,
             element,
+            _recurseList,
           );
         }
       });
@@ -33,7 +58,9 @@ function toPathSchemaInternal<T = any, S extends StrictSchema = Schema>(
         pathSchema[i] = toPathSchemaInternal<T, S>(
           schemaItems as S,
           `${name}[${i}]`,
+          rootSchema,
           element,
+          _recurseList,
         );
       });
     }
@@ -43,7 +70,9 @@ function toPathSchemaInternal<T = any, S extends StrictSchema = Schema>(
       pathSchema[property] = toPathSchemaInternal<T, S>(
         field,
         `${name}.${property}`,
+        rootSchema,
         get(formData, [property]),
+        _recurseList,
       );
     }
   }
@@ -53,7 +82,8 @@ function toPathSchemaInternal<T = any, S extends StrictSchema = Schema>(
 export function toPathSchema<T = any, S extends StrictSchema = Schema>(
   schema: S,
   name: string,
-  formData: T,
+  rootSchema?: S,
+  formData?: T,
 ): PathSchema<T> {
-  return toPathSchemaInternal(schema, name, formData);
+  return toPathSchemaInternal(schema, name, rootSchema, formData);
 }

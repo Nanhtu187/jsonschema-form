@@ -73,8 +73,9 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
                   pathSchema[SCHEMA_KEY] as S,
                 )
               }
+              style={{ border: 'none', background: 'white', color: 'blue' }}
             >
-              Add Field
+              +
             </button>
           )}
         </>
@@ -86,7 +87,7 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
 export const Form = (props: FormProps) => {
   const [formData, setFormData] = useState<any>(props.formData);
   const [pathSchema, setPathSchema] = useState(
-    toPathSchema(props.schema, '', formData),
+    toPathSchema(props.schema, '', props.schema, formData),
   );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,7 +95,7 @@ export const Form = (props: FormProps) => {
     setFormData((prev: any) => {
       let newState = JSON.parse(JSON.stringify(prev));
       set(newState, name, value);
-      setPathSchema(toPathSchema(props.schema, '', newState));
+      setPathSchema(toPathSchema(props.schema, '', props.schema, newState));
       return newState;
     });
   };
@@ -115,7 +116,7 @@ export const Form = (props: FormProps) => {
 
   useEffect(() => {
     // Update pathSchema after formData has been updated
-    setPathSchema(toPathSchema(props.schema, '', formData));
+    setPathSchema(toPathSchema(props.schema, '', props.schema, formData));
   }, [formData]);
 
   return (
