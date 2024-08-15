@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { toPathSchema } from '../../utils/src/schema/toPathSchema.ts';
+import { useEffect, useState } from "react";
+import { toPathSchema } from "../../utils/src/schema/toPathSchema.ts";
 import {
   ARRAY_TYPE,
   NAME_KEY,
@@ -7,15 +7,17 @@ import {
   OBJECT_TYPE,
   SCHEMA_KEY,
   STRING_TYPE,
-} from '../../utils/src/constants.ts';
-import { get, set } from 'lodash';
+} from "../../utils/src/constants.ts";
+import { get, set } from "lodash";
 import {
   FormProps,
   PathSchema,
   StrictSchema,
   Schema,
-} from '../../utils/src/types.ts';
-import { getFormData } from '../../utils/src/schema/loadFormData.ts';
+} from "../../utils/src/types.ts";
+import { getFormData } from "../../utils/src/schema/loadFormData.ts";
+import { InputField } from "../tailwind/input/input_field";
+import { InputType } from "../../utils/enums/input_type.ts";
 
 function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
   pathSchema: PathSchema<T>,
@@ -29,14 +31,14 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
   level: number,
 ) {
   return (
-    <>
+    <div>
       {pathSchema[SCHEMA_KEY].type === NUMBER_TYPE ||
       pathSchema[SCHEMA_KEY].type === STRING_TYPE ? (
-        <input
+        <InputField
           name={pathSchema[NAME_KEY].substring(1)}
-          value={formData as string}
+          defaultValue={formData as string}
           onChange={handleInputChange}
-          type={pathSchema[SCHEMA_KEY].type as string}
+          type={pathSchema[SCHEMA_KEY].type as InputType}
         />
       ) : (
         <>
@@ -52,6 +54,7 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
               return (
                 <div key={key} style={{ marginLeft: `${level * 10}px` }}>
                   <label>{key}: </label>
+                  <br />
                   {buildFormFromPathSchema(
                     get(pathSchema, [key]),
                     get(formData, [key]),
@@ -79,14 +82,14 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
           )}
         </>
       )}
-    </>
+    </div>
   );
 }
 
 export const Form = (props: FormProps) => {
   const [formData, setFormData] = useState<any>(props.formData);
   const [pathSchema, setPathSchema] = useState(
-    toPathSchema(props.schema, '', formData),
+    toPathSchema(props.schema, "", formData),
   );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,7 +97,7 @@ export const Form = (props: FormProps) => {
     setFormData((prev: any) => {
       let newState = JSON.parse(JSON.stringify(prev));
       set(newState, name, value);
-      setPathSchema(toPathSchema(props.schema, '', newState));
+      setPathSchema(toPathSchema(props.schema, "", newState));
       return newState;
     });
   };
@@ -115,7 +118,7 @@ export const Form = (props: FormProps) => {
 
   useEffect(() => {
     // Update pathSchema after formData has been updated
-    setPathSchema(toPathSchema(props.schema, '', formData));
+    setPathSchema(toPathSchema(props.schema, "", formData));
   }, [formData]);
 
   return (
@@ -127,7 +130,7 @@ export const Form = (props: FormProps) => {
         handleAddField,
         0,
       )}
-      <input type={'submit'}></input>
+      <input type={"submit"}></input>
     </form>
   );
 };
