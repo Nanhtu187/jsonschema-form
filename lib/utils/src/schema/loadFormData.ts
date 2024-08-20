@@ -1,12 +1,12 @@
-import { Schema, StrictSchema } from '../types.ts';
+import { Schema, StrictSchema } from "../types.ts";
 import {
   ARRAY_TYPE,
   DEFAULT_KEY,
   PROPERTIES_KEY,
   TYPE_KEY,
-} from '../constants.ts';
-import get from 'lodash/get';
-import set from 'lodash/set';
+} from "../constants.ts";
+import get from "lodash/get";
+import set from "lodash/set";
 
 export function getFormData<T = any, S extends StrictSchema = Schema>(
   schema: S,
@@ -26,5 +26,5 @@ export function getFormData<T = any, S extends StrictSchema = Schema>(
     }
     return formData as T;
   }
-  return '' as T;
+  return "" as T;
 }

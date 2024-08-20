@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { toPathSchema } from "../../utils/src/schema/toPathSchema.ts";
 import {
   ARRAY_TYPE,
+  BOOLEAN_TYPE,
   NAME_KEY,
   NUMBER_TYPE,
   OBJECT_TYPE,
@@ -18,6 +19,10 @@ import {
 import { getFormData } from "../../utils/src/schema/loadFormData.ts";
 import { InputField } from "../tailwind/input/input_field";
 import { InputType } from "../../utils/enums/input_type.ts";
+import { Button } from "../tailwind/button/button";
+import { KeyLabel } from "../tailwind/label/key";
+import { Submit } from "../tailwind/input/submit";
+import { BooleanInput } from "../tailwind/input/boolean";
 
 function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
   pathSchema: PathSchema<T>,
@@ -40,6 +45,12 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
           onChange={handleInputChange}
           type={pathSchema[SCHEMA_KEY].type as InputType}
         />
+      ) : pathSchema[SCHEMA_KEY].type === BOOLEAN_TYPE ? (
+        <BooleanInput
+          name={pathSchema[NAME_KEY].substring(1)}
+          defaultValue={formData as boolean}
+          onChange={handleInputChange}
+        />
       ) : (
         <>
           {Object.keys(pathSchema).map((key) => {
@@ -53,7 +64,7 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
             ) {
               return (
                 <div key={key} style={{ marginLeft: `${level * 10}px` }}>
-                  <label>{key}: </label>
+                  <KeyLabel label={key} />
                   <br />
                   {buildFormFromPathSchema(
                     get(pathSchema, [key]),
@@ -68,7 +79,7 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
             return null;
           })}
           {pathSchema[SCHEMA_KEY].type == ARRAY_TYPE && (
-            <button
+            <Button
               onClick={(event) =>
                 handleAddField(
                   event,
@@ -76,9 +87,8 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
                   pathSchema[SCHEMA_KEY] as S,
                 )
               }
-            >
-              Add Field
-            </button>
+              text={"+"}
+            ></Button>
           )}
         </>
       )}
@@ -93,11 +103,12 @@ export const Form = (props: FormProps) => {
   );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+    const { name, type, checked, value } = event.target;
     setFormData((prev: any) => {
       let newState = JSON.parse(JSON.stringify(prev));
-      set(newState, name, value);
-      setPathSchema(toPathSchema(props.schema, "", newState));
+      set(newState, name, type === "checkbox" ? checked : value);
+      // setPathSchema(toPathSchema(props.schema, "", newState));
+      console.log(newState);
       return newState;
     });
   };
@@ -130,7 +141,7 @@ export const Form = (props: FormProps) => {
         handleAddField,
         0,
       )}
-      <input type={"submit"}></input>
+      <Submit />
     </form>
   );
 };
