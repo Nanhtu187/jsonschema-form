@@ -1,3 +1,4 @@
+// Update the Form component with CSS classes
 import { useEffect, useState } from "react";
 import { toPathSchema } from "../../utils/src/schema/toPathSchema.ts";
 import {
@@ -17,12 +18,13 @@ import {
   Schema,
 } from "../../utils/src/types.ts";
 import { getFormData } from "../../utils/src/schema/loadFormData.ts";
-import { InputField } from "../tailwind/input/input_field";
-import { InputType } from "../../utils/enums/input_type.ts";
 import { Button } from "../tailwind/button/button";
 import { KeyLabel } from "../tailwind/label/key";
 import { Submit } from "../tailwind/input/submit";
-import { BooleanInput } from "../tailwind/input/boolean";
+import { ToggleButton } from "../tailwind/input/toggle";
+import { UploadFile } from "../tailwind/input/upload_file";
+import "../../style/index.css";
+import { GetTailwindInputComponent } from "../../utils/helpers/getComponent.tsx";
 
 function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
   pathSchema: PathSchema<T>,
@@ -33,73 +35,75 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
     key: string,
     schema: S,
   ) => void,
-  level: number,
 ) {
   return (
-    <div>
-      {pathSchema[SCHEMA_KEY].type === NUMBER_TYPE ||
-      pathSchema[SCHEMA_KEY].type === STRING_TYPE ? (
-        <InputField
-          name={pathSchema[NAME_KEY].substring(1)}
-          defaultValue={formData as string}
-          onChange={handleInputChange}
-          type={pathSchema[SCHEMA_KEY].type as InputType}
-        />
-      ) : pathSchema[SCHEMA_KEY].type === BOOLEAN_TYPE ? (
-        <BooleanInput
-          name={pathSchema[NAME_KEY].substring(1)}
-          defaultValue={formData as boolean}
-          onChange={handleInputChange}
-        />
-      ) : (
-        <>
-          {Object.keys(pathSchema).map((key) => {
-            if (key === NAME_KEY || key == SCHEMA_KEY) {
-              return null;
-            }
-            if (
-              typeof get(pathSchema, [key]) === OBJECT_TYPE &&
-              formData &&
-              get(formData, [key]) !== undefined
-            ) {
-              return (
-                <div key={key} style={{ marginLeft: `${level * 10}px` }}>
-                  <KeyLabel label={key} />
-                  <br />
+    <>
+      {Object.keys(pathSchema).map((key) => {
+        if (key === NAME_KEY || key == SCHEMA_KEY) {
+          return null;
+        }
+        if (
+          typeof get(pathSchema, [key]) === OBJECT_TYPE &&
+          formData &&
+          get(formData, [key]) !== undefined
+        ) {
+          let schema = get(pathSchema, [key]);
+          let data = get(formData, [key]);
+          if (
+            schema[SCHEMA_KEY].type === NUMBER_TYPE ||
+            schema[SCHEMA_KEY].type === STRING_TYPE ||
+            schema[SCHEMA_KEY].type == BOOLEAN_TYPE
+          ) {
+            return GetTailwindInputComponent(
+              schema[SCHEMA_KEY].type,
+              schema[NAME_KEY].substring(1),
+              key,
+              data,
+              handleInputChange,
+            );
+          } else {
+            return (
+              <>
+                <KeyLabel label={key} />
+                <div className="w-full border-t border-solid border-gray-300 my-4"></div>
+                <div key={key} className="ml-4">
                   {buildFormFromPathSchema(
                     get(pathSchema, [key]),
                     get(formData, [key]),
                     handleInputChange,
                     handleAddField,
-                    level + 1,
                   )}
                 </div>
-              );
-            }
-            return null;
-          })}
-          {pathSchema[SCHEMA_KEY].type == ARRAY_TYPE && (
-            <Button
-              onClick={(event) =>
-                handleAddField(
-                  event,
-                  pathSchema[NAME_KEY],
-                  pathSchema[SCHEMA_KEY] as S,
-                )
-              }
-              text={"+"}
-            ></Button>
-          )}
-        </>
+              </>
+            );
+          }
+        }
+        return null;
+      })}
+      {pathSchema[SCHEMA_KEY].type == ARRAY_TYPE && (
+        <Button
+          key={`${pathSchema[NAME_KEY]}-button`}
+          onClick={(event) =>
+            handleAddField(
+              event,
+              pathSchema[NAME_KEY],
+              pathSchema[SCHEMA_KEY] as S,
+            )
+          }
+          text={"+"}
+        ></Button>
       )}
-    </div>
+    </>
   );
 }
 
 export const Form = (props: FormProps) => {
-  const [formData, setFormData] = useState<any>(props.formData);
+  const [schema, setSchema] = useState<Schema>({});
+  const [formData, setFormData] = useState<FormData>();
+  const [loading, setLoading] = useState(true);
+
   const [pathSchema, setPathSchema] = useState(
-    toPathSchema(props.schema, "", formData),
+    toPathSchema(schema, "", formData),
   );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,8 +111,6 @@ export const Form = (props: FormProps) => {
     setFormData((prev: any) => {
       let newState = JSON.parse(JSON.stringify(prev));
       set(newState, name, type === "checkbox" ? checked : value);
-      // setPathSchema(toPathSchema(props.schema, "", newState));
-      console.log(newState);
       return newState;
     });
   };
@@ -127,21 +129,40 @@ export const Form = (props: FormProps) => {
     });
   };
 
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    props.onSubmit
+      ? props.onSubmit(JSON.stringify(formData, null, 2))
+      : console.log(JSON.stringify(formData, null, 2));
+  };
+
   useEffect(() => {
     // Update pathSchema after formData has been updated
-    setPathSchema(toPathSchema(props.schema, "", formData));
+    setPathSchema(toPathSchema(schema, "", formData));
   }, [formData]);
 
   return (
-    <form onSubmit={props.onSubmit}>
-      {buildFormFromPathSchema(
-        pathSchema,
-        formData,
-        handleInputChange,
-        handleAddField,
-        0,
+    <div className="bg-white dark:bg-gray-900 min-h-screen p-4">
+      <ToggleButton />
+      <UploadFile
+        schema={schema}
+        setSchema={setSchema}
+        formData={formData}
+        setFormData={setFormData}
+        loading={loading}
+        setLoading={setLoading}
+      />
+      {!loading && (
+        <form onSubmit={onSubmit} className="space-y-4">
+          {buildFormFromPathSchema(
+            pathSchema,
+            formData,
+            handleInputChange,
+            handleAddField,
+          )}
+          <Submit />
+        </form>
       )}
-      <Submit />
-    </form>
+    </div>
   );
 };
