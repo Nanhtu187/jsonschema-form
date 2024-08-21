@@ -1,6 +1,6 @@
 export const NAME_KEY = "$name";
-export const PROPERTIES_KEY = 'properties';
-export const ADDITIONAL_PROPERTIES_KEY = 'additionalProperties';
+export const PROPERTIES_KEY = "properties";
+export const ADDITIONAL_PROPERTIES_KEY = "additionalProperties";
 export const TYPE_KEY = "type";
 export const DEFAULT_KEY = "default";
 export const OBJECT_TYPE = "object";
@@ -9,3 +9,4 @@ export const NUMBER_TYPE = "number";
 export const STRING_TYPE = "string";
 export const ITEMS_KEY = "items";
 export const SCHEMA_KEY = "$schema";
+export const BOOLEAN_TYPE = "boolean";

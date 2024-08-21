@@ -9,10 +9,6 @@
       "type": "number",
       "default": 21
     },
-    "male": {
-      "type": "boolean",
-      "default": true
-    },
     "test": {
       "type": "object",
       "properties": {
