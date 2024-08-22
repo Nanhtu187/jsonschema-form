@@ -25,6 +25,7 @@ import { ToggleButton } from "../tailwind/input/toggle";
 import { UploadFile } from "../tailwind/input/upload_file";
 import "../../style/index.css";
 import { GetTailwindInputComponent } from "../../utils/helpers/getComponent.tsx";
+import { Accordion } from "../tailwind/label/accordion";
 
 function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
   pathSchema: PathSchema<T>,
@@ -37,7 +38,7 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
   ) => void,
 ) {
   return (
-    <>
+    <div>
       {Object.keys(pathSchema).map((key) => {
         if (key === NAME_KEY || key == SCHEMA_KEY) {
           return null;
@@ -63,10 +64,9 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
             );
           } else {
             return (
-              <>
-                <KeyLabel label={key} />
+              <Accordion key={key} title={key}>
                 <div className="w-full border-t border-solid border-gray-300 my-4"></div>
-                <div key={key} className="ml-4">
+                <div className="ml-4">
                   {buildFormFromPathSchema(
                     get(pathSchema, [key]),
                     get(formData, [key]),
@@ -74,7 +74,7 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
                     handleAddField,
                   )}
                 </div>
-              </>
+              </Accordion>
             );
           }
         }
@@ -93,7 +93,7 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
           text={"+"}
         ></Button>
       )}
-    </>
+    </div>
   );
 }
 
