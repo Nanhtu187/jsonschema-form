@@ -5,27 +5,30 @@ import {
   ARRAY_TYPE,
   BOOLEAN_TYPE,
   NAME_KEY,
+  NULL_TYPE,
   NUMBER_TYPE,
   OBJECT_TYPE,
   SCHEMA_KEY,
   STRING_TYPE,
 } from "../../utils/src/constants.ts";
 import { get, set } from "lodash";
-import {
-  FormProps,
-  PathSchema,
-  StrictSchema,
-  Schema,
-} from "../../utils/src/types.ts";
+import { PathSchema, StrictSchema, Schema } from "../../utils/src/types.ts";
 import { getFormData } from "../../utils/src/schema/loadFormData.ts";
 import { Button } from "../tailwind/button/button";
-import { KeyLabel } from "../tailwind/label/key";
 import { Submit } from "../tailwind/input/submit";
 import { ToggleButton } from "../tailwind/input/toggle";
-import { UploadFile } from "../tailwind/input/upload_file";
 import "../../style/index.css";
 import { GetTailwindInputComponent } from "../../utils/helpers/getComponent.tsx";
 import { Accordion } from "../tailwind/label/accordion";
+import { LoadFromFile } from "../../main.ts";
+import { ErrorField } from "../tailwind/error/errorField.tsx";
+
+export interface FormProps {
+  //<T = any, S extends StrictSchema = Schema> {
+  onSubmit?: (str: string) => void;
+  onError?: (e: Error) => void;
+  file?: File;
+}
 
 function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
   pathSchema: PathSchema<T>,
@@ -62,7 +65,10 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
               data,
               handleInputChange,
             );
-          } else {
+          } else if (
+            schema[SCHEMA_KEY].type === OBJECT_TYPE ||
+            schema[SCHEMA_KEY].type === ARRAY_TYPE
+          ) {
             return (
               <Accordion key={key} title={key}>
                 <div className="w-full border-t border-solid border-gray-300 my-4"></div>
@@ -74,6 +80,14 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
                     handleAddField,
                   )}
                 </div>
+              </Accordion>
+            );
+          } else if (schema[SCHEMA_KEY].type == NULL_TYPE) {
+            return null;
+          } else {
+            return (
+              <Accordion key={key} title={key}>
+                <ErrorField error={"Unsupported Type"} />
               </Accordion>
             );
           }
@@ -101,6 +115,7 @@ export const Form = (props: FormProps) => {
   const [schema, setSchema] = useState<Schema>({});
   const [formData, setFormData] = useState<FormData>();
   const [loading, setLoading] = useState(true);
+  const [errorHandled, setErrorHandled] = useState(false);
 
   const [pathSchema, setPathSchema] = useState(
     toPathSchema(schema, "", formData),
@@ -141,17 +156,28 @@ export const Form = (props: FormProps) => {
     setPathSchema(toPathSchema(schema, "", formData));
   }, [formData]);
 
+  useEffect(() => {
+    if (props.file) {
+      LoadFromFile(props.file, (e: Error) => {
+        if (!errorHandled) {
+          setErrorHandled(true);
+          if (props.onError) {
+            props.onError(e);
+          } else {
+            alert(e.message);
+          }
+        }
+      }).then((schema) => {
+        setSchema(schema);
+        setFormData(getFormData(schema));
+        setLoading(false);
+      });
+    }
+  }, [props.file]);
+
   return (
     <div className="bg-white dark:bg-gray-900 min-h-screen p-4">
       <ToggleButton />
-      <UploadFile
-        schema={schema}
-        setSchema={setSchema}
-        formData={formData}
-        setFormData={setFormData}
-        loading={loading}
-        setLoading={setLoading}
-      />
       {!loading && (
         <form onSubmit={onSubmit} className="space-y-4">
           {buildFormFromPathSchema(
