@@ -1,24 +1,14 @@
-import React, { ChangeEvent } from "react";
-import { LoadFromFile } from "../../../../utils/src/schema/loadSchema.ts";
-import { getFormData } from "../../../../utils/src/schema/loadFormData.ts";
-import { Schema, StrictSchema } from "../../../../utils/src/types.ts";
-interface UploadFileProps<S extends StrictSchema = Schema, T = any> {
-  schema: S;
-  formData: T;
-  loading: boolean;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  setSchema: React.Dispatch<React.SetStateAction<S>>;
-  setFormData: React.Dispatch<React.SetStateAction<T>>;
+import { ChangeEvent } from "react";
+
+export interface UploadFileProps {
+  setFile: (file: File) => void;
 }
 
 export const UploadFile = (props: UploadFileProps) => {
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files ? event.target.files : null;
     if (files) {
-      const schema = await LoadFromFile(files[0]);
-      props.setSchema(schema);
-      props.setFormData(getFormData(schema));
-      props.setLoading(false);
+      props.setFile(files[0]);
     }
   };
 

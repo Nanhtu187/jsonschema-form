@@ -5,9 +5,13 @@
       "type": "string",
       "default": "Nguyen Anh Tu"
     },
-    "age": {
-      "type": "num",
+    "age": 
+      "type": "number",
       "default": 21
+    },
+    "male": {
+      "type": "boolean",
+      "default": true
     },
     "test": {
       "type": "object",

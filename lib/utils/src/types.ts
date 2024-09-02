@@ -6,10 +6,6 @@ export type GenericObjectType = {
 export type StrictSchema = JSONSchema7;
 
 export type Schema = StrictSchema & GenericObjectType;
-export interface FormProps {
-  //<T = any, S extends StrictSchema = Schema> {
-  onSubmit?: (str: string) => void;
-}
 
 export type FieldPath = {
   $name: string;
