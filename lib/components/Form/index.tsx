@@ -159,13 +159,10 @@ export const Form = (props: FormProps) => {
   useEffect(() => {
     if (props.file) {
       LoadFromFile(props.file, (e: Error) => {
-        if (!errorHandled) {
-          setErrorHandled(true);
-          if (props.onError) {
-            props.onError(e);
-          } else {
-            alert(e.message);
-          }
+        if (props.onError) {
+          props.onError(e);
+        } else {
+          alert(e.message);
         }
       }).then((schema) => {
         setSchema(schema);
