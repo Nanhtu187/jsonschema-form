@@ -22,12 +22,14 @@ import { GetTailwindInputComponent } from "../../utils/helpers/getComponent.tsx"
 import { Accordion } from "../tailwind/label/accordion";
 import { LoadFromFile } from "../../main.ts";
 import { ErrorField } from "../tailwind/error/errorField.tsx";
+import { Validator } from "../../validator";
 
 export interface FormProps {
   //<T = any, S extends StrictSchema = Schema> {
   onSubmit?: (str: string) => void;
   onError?: (e: Error) => void;
   file?: File;
+  validator: Validator;
 }
 
 function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
@@ -51,8 +53,8 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
           formData &&
           get(formData, [key]) !== undefined
         ) {
-          let schema = get(pathSchema, [key]);
-          let data = get(formData, [key]);
+          const schema = get(pathSchema, [key]);
+          const data = get(formData, [key]);
           if (
             schema[SCHEMA_KEY].type === NUMBER_TYPE ||
             schema[SCHEMA_KEY].type === STRING_TYPE ||
@@ -115,17 +117,24 @@ export const Form = (props: FormProps) => {
   const [schema, setSchema] = useState<Schema>({});
   const [formData, setFormData] = useState<FormData>();
   const [loading, setLoading] = useState(true);
-  const [errorHandled, setErrorHandled] = useState(false);
 
   const [pathSchema, setPathSchema] = useState(
     toPathSchema(schema, "", formData),
   );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, type, checked, value } = event.target;
+    const { name, checked, value } = event.target;
     setFormData((prev: any) => {
-      let newState = JSON.parse(JSON.stringify(prev));
-      set(newState, name, type === "checkbox" ? checked : value);
+      const newState = JSON.parse(JSON.stringify(prev));
+      const tempSchema = get(pathSchema, name);
+      const schemaType = tempSchema[SCHEMA_KEY].type;
+      let newValue: any = value;
+      if (schemaType === NUMBER_TYPE) {
+        newValue = Number(value);
+      } else if (schemaType === BOOLEAN_TYPE) {
+        newValue = checked;
+      }
+      set(newState, name, newValue);
       return newState;
     });
   };
@@ -137,8 +146,8 @@ export const Form = (props: FormProps) => {
   ) => {
     event.preventDefault();
     setFormData((prev: any) => {
-      let newState = JSON.parse(JSON.stringify(prev));
-      let temp = get(newState, key.substring(1));
+      const newState = JSON.parse(JSON.stringify(prev));
+      const temp = get(newState, key.substring(1));
       temp[temp.length] = getFormData(schema.items as StrictSchema);
       return newState;
     });
@@ -146,6 +155,11 @@ export const Form = (props: FormProps) => {
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const errors = props.validator.validateFormData(formData, schema);
+    if (errors.errors.length > 0) {
+      alert(JSON.stringify(errors.errors, null, 2));
+      return;
+    }
     props.onSubmit
       ? props.onSubmit(JSON.stringify(formData, null, 2))
       : console.log(JSON.stringify(formData, null, 2));

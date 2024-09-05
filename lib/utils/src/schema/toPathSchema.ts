@@ -1,11 +1,11 @@
-import { PathSchema, Schema, StrictSchema } from '../types.ts';
+import { PathSchema, Schema, StrictSchema } from "../types.ts";
 import {
   ITEMS_KEY,
   NAME_KEY,
   PROPERTIES_KEY,
   SCHEMA_KEY,
-} from '../constants.ts';
-import get from 'lodash/get';
+} from "../constants.ts";
+import get from "lodash/get";
 
 function toPathSchemaInternal<T = any, S extends StrictSchema = Schema>(
   schema: S,
