@@ -37,3 +37,11 @@ export type ErrorSchema<T = any> = FieldErrors & {
 export type FieldErrors = {
   __errors?: FieldError[];
 };
+
+export interface BaseInputProps {
+  name: string;
+  label: string;
+  value: any;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
+}

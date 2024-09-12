@@ -1,7 +1,5 @@
-import { NUMBER_TYPE, STRING_TYPE } from "../src/constants";
-import { InputType } from "../enums/input_type";
+import { INTEGER_TYPE, NUMBER_TYPE } from "../src/constants";
 import { InputField } from "../../components/tailwind/input/input_field";
-import { BooleanInput } from "../../components/tailwind/input/boolean";
 
 export const GetTailwindInputComponent = (
   type: string,
@@ -10,22 +8,23 @@ export const GetTailwindInputComponent = (
   formData: any,
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
 ): JSX.Element => {
-  if (type === NUMBER_TYPE || type === STRING_TYPE) {
+  if (type === NUMBER_TYPE || type === INTEGER_TYPE) {
     return (
       <InputField
         name={name}
         label={key}
-        defaultValue={formData}
+        value={formData}
+        type={"number"}
         onChange={handleInputChange}
-        type={type as InputType}
       />
     );
   } else {
     return (
-      <BooleanInput
+      <InputField
         name={name}
         label={key}
-        defaultValue={formData as boolean} // Assuming formData is a string representation of a boolean
+        value={formData}
+        type={"text"}
         onChange={handleInputChange}
       />
     );

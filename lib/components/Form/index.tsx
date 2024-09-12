@@ -13,7 +13,10 @@ import {
 } from "../../utils/src/constants.ts";
 import { get, set } from "lodash";
 import { PathSchema, StrictSchema, Schema } from "../../utils/src/types.ts";
-import { getFormData } from "../../utils/src/schema/loadFormData.ts";
+import {
+  getDefaultValue,
+  getFormData,
+} from "../../utils/src/schema/loadFormData.ts";
 import { Button } from "../tailwind/button/button";
 import { Submit } from "../tailwind/input/submit";
 import { ToggleButton } from "../tailwind/input/toggle";
@@ -23,6 +26,7 @@ import { Accordion } from "../tailwind/label/accordion";
 import { LoadFromFile } from "../../main.ts";
 import { ErrorField } from "../tailwind/error/errorField.tsx";
 import { Validator } from "../../validator";
+import { BooleanInput } from "../tailwind/input/boolean";
 
 export interface FormProps {
   //<T = any, S extends StrictSchema = Schema> {
@@ -48,17 +52,12 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
         if (key === NAME_KEY || key == SCHEMA_KEY) {
           return null;
         }
-        if (
-          typeof get(pathSchema, [key]) === OBJECT_TYPE &&
-          formData &&
-          get(formData, [key]) !== undefined
-        ) {
+        if (typeof get(pathSchema, [key]) === OBJECT_TYPE) {
           const schema = get(pathSchema, [key]);
           const data = get(formData, [key]);
           if (
             schema[SCHEMA_KEY].type === NUMBER_TYPE ||
-            schema[SCHEMA_KEY].type === STRING_TYPE ||
-            schema[SCHEMA_KEY].type == BOOLEAN_TYPE
+            schema[SCHEMA_KEY].type === STRING_TYPE
           ) {
             return GetTailwindInputComponent(
               schema[SCHEMA_KEY].type,
@@ -66,6 +65,16 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
               key,
               data,
               handleInputChange,
+            );
+          } else if (schema[SCHEMA_KEY].type === BOOLEAN_TYPE) {
+            return (
+              <BooleanInput
+                key={schema[NAME_KEY].substring(1)}
+                name={schema[NAME_KEY].substring(1)}
+                label={key}
+                value={formData as boolean}
+                onChange={handleInputChange}
+              />
             );
           } else if (
             schema[SCHEMA_KEY].type === OBJECT_TYPE ||
@@ -147,8 +156,12 @@ export const Form = (props: FormProps) => {
     event.preventDefault();
     setFormData((prev: any) => {
       const newState = JSON.parse(JSON.stringify(prev));
-      const temp = get(newState, key.substring(1));
+      let temp = get(newState, key.substring(1));
+      if (temp === undefined) {
+        temp = getDefaultValue(ARRAY_TYPE);
+      }
       temp[temp.length] = getFormData(schema.items as StrictSchema);
+      set(newState, key.substring(1), temp);
       return newState;
     });
   };
@@ -157,7 +170,9 @@ export const Form = (props: FormProps) => {
     event.preventDefault();
     const errors = props.validator.validateFormData(formData, schema);
     if (errors.errors.length > 0) {
-      alert(JSON.stringify(errors.errors, null, 2));
+      errors.errors.map((error) => {
+        alert(error.property + " " + error.message);
+      });
       return;
     }
     props.onSubmit

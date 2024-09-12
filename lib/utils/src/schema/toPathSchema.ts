@@ -6,12 +6,16 @@ import {
   SCHEMA_KEY,
 } from "../constants.ts";
 import get from "lodash/get";
+import { getDefaultValue } from "./loadFormData.ts";
 
 function toPathSchemaInternal<T = any, S extends StrictSchema = Schema>(
   schema: S,
   name: string,
   formData: T,
 ): PathSchema<T> {
+  if (formData === undefined) {
+    formData = getDefaultValue(schema.type as string);
+  }
   const pathSchema = {
     [NAME_KEY]: name,
   } as PathSchema;

@@ -11,3 +11,4 @@ export const ITEMS_KEY = "items";
 export const SCHEMA_KEY = "$schema";
 export const BOOLEAN_TYPE = "boolean";
 export const NULL_TYPE = "null";
+export const INTEGER_TYPE = "integer";
