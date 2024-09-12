@@ -5,7 +5,7 @@ export interface UploadFileProps {
 }
 
 export const UploadFile = (props: UploadFileProps) => {
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files ? event.target.files : null;
     if (files) {
       props.setFile(files[0]);

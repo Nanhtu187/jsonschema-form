@@ -23,16 +23,13 @@ import { ToggleButton } from "../tailwind/input/toggle";
 import "../../style/index.css";
 import { GetTailwindInputComponent } from "../../utils/helpers/getComponent.tsx";
 import { Accordion } from "../tailwind/label/accordion";
-import { LoadFromFile } from "../../main.ts";
 import { ErrorField } from "../tailwind/error/errorField.tsx";
 import { Validator } from "../../validator";
 import { BooleanInput } from "../tailwind/input/boolean";
 
-export interface FormProps {
-  //<T = any, S extends StrictSchema = Schema> {
+export interface FormProps<S extends StrictSchema = Schema> {
   onSubmit?: (str: string) => void;
-  onError?: (e: Error) => void;
-  file?: File;
+  schema: S;
   validator: Validator;
 }
 
@@ -46,6 +43,7 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
     schema: S,
   ) => void,
 ) {
+  console.log(JSON.stringify(pathSchema, null, 2));
   return (
     <div>
       {Object.keys(pathSchema).map((key) => {
@@ -183,23 +181,15 @@ export const Form = (props: FormProps) => {
   useEffect(() => {
     // Update pathSchema after formData has been updated
     setPathSchema(toPathSchema(schema, "", formData));
-  }, [formData]);
+  }, [formData, schema]);
 
   useEffect(() => {
-    if (props.file) {
-      LoadFromFile(props.file, (e: Error) => {
-        if (props.onError) {
-          props.onError(e);
-        } else {
-          alert(e.message);
-        }
-      }).then((schema) => {
-        setSchema(schema);
-        setFormData(getFormData(schema));
-        setLoading(false);
-      });
+    if (props.schema) {
+      setSchema(schema);
+      setFormData(getFormData(schema));
+      setLoading(false);
     }
-  }, [props.file]);
+  }, [props.schema]);
 
   return (
     <div className="bg-white dark:bg-gray-900 min-h-screen p-4">
