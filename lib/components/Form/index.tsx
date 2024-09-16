@@ -43,7 +43,6 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
     schema: S,
   ) => void,
 ) {
-  console.log(JSON.stringify(pathSchema, null, 2));
   return (
     <div>
       {Object.keys(pathSchema).map((key) => {
@@ -121,7 +120,7 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
 }
 
 export const Form = (props: FormProps) => {
-  const [schema, setSchema] = useState<Schema>({});
+  const [schema, setSchema] = useState<Schema>(props.schema);
   const [formData, setFormData] = useState<FormData>();
   const [loading, setLoading] = useState(true);
 
@@ -184,12 +183,10 @@ export const Form = (props: FormProps) => {
   }, [formData, schema]);
 
   useEffect(() => {
-    if (props.schema) {
-      setSchema(schema);
-      setFormData(getFormData(schema));
-      setLoading(false);
-    }
-  }, [props.schema]);
+    setSchema(props.schema);
+    setFormData(getFormData(schema));
+    setLoading(false);
+  }, [props.schema, schema]);
 
   return (
     <div className="bg-white dark:bg-gray-900 min-h-screen p-4">
