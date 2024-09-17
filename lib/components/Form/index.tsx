@@ -62,6 +62,7 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
               key,
               data,
               handleInputChange,
+              schema[SCHEMA_KEY].description,
             );
           } else if (schema[SCHEMA_KEY].type === BOOLEAN_TYPE) {
             return (
@@ -71,6 +72,7 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
                 label={key}
                 value={formData as boolean}
                 onChange={handleInputChange}
+                description={schema[SCHEMA_KEY].description}
               />
             );
           } else if (
@@ -78,7 +80,11 @@ function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
             schema[SCHEMA_KEY].type === ARRAY_TYPE
           ) {
             return (
-              <Accordion key={key} title={key}>
+              <Accordion
+                key={key}
+                title={key}
+                description={schema[SCHEMA_KEY].description}
+              >
                 <div className="w-full border-t border-solid border-gray-300 my-4"></div>
                 <div className="ml-4">
                   {buildFormFromPathSchema(

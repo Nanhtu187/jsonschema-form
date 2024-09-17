@@ -1,8 +1,10 @@
 import React from "react";
 import { KeyLabel } from "../key";
+import TooltipIcon from "../../icon/tooltipIcon.tsx";
 
 export interface AccordionProps {
   title: string;
+  description?: string;
   children: React.ReactNode;
 }
 
@@ -15,7 +17,10 @@ export const Accordion = (props: AccordionProps) => {
         className="flex items-center justify-between p-2 cursor-pointer"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <KeyLabel label={props.title} />
+        <div className="flex items-center">
+          <KeyLabel label={props.title} />
+          {props.description && <TooltipIcon description={props.description} />}
+        </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className={`w-6 h-6 transform ${isOpen ? "rotate-180" : ""}`}

@@ -1,4 +1,4 @@
-import { Form, Schema, UploadFile } from "../lib/main.ts";
+import { Form, LoadFromFile, Schema, UploadFile } from "../lib/main.ts";
 import { useEffect, useState } from "react";
 import { Validator } from "../lib/validator";
 
@@ -10,20 +10,10 @@ function App() {
 
   useEffect(() => {
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target) {
-          const result = event.target.result as string;
-          try {
-            const parsed = JSON.parse(result);
-            setSchema(parsed);
-            setLoading(false);
-          } catch (e) {
-            alert("Invalid JSON");
-          }
-        }
-      };
-      reader.readAsText(file);
+      LoadFromFile(file, (e) => alert(e)).then((schema) => {
+        setSchema(schema);
+        setLoading(false);
+      });
     }
   }, [file]);
 

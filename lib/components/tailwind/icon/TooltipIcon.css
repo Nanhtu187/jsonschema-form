@@ -1,0 +1,5 @@
+/* Add this to your global CSS file if needed */
+.tooltip-icon:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}

@@ -4,6 +4,7 @@
   "properties": {
     "name": {
       "type": "string",
+      "description": "Name of the person",
       "default": "Nguyen Anh Tu"
     },
     "age": {
@@ -12,9 +13,11 @@
     },
     "male": {
       "type": "boolean",
-      "default": true
+      "default": true,
+        "description": "if person is male"
     },
     "test": {
+      "description": "Test",
       "type": "object",
       "require": ["test2"],
       "properties": {

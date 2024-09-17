@@ -7,6 +7,7 @@ export const GetTailwindInputComponent = (
   key: string,
   formData: any,
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+  description?: string,
 ): JSX.Element => {
   if (type === NUMBER_TYPE || type === INTEGER_TYPE) {
     return (
@@ -16,6 +17,7 @@ export const GetTailwindInputComponent = (
         value={formData}
         type={"number"}
         onChange={handleInputChange}
+        description={description}
       />
     );
   } else {
@@ -26,6 +28,7 @@ export const GetTailwindInputComponent = (
         value={formData}
         type={"text"}
         onChange={handleInputChange}
+        description={description}
       />
     );
   }
