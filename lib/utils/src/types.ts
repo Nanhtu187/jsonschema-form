@@ -22,7 +22,7 @@ export type ValidationError = {
   params?: any;
   property?: string;
   schemaPath?: string;
-  // stack: string;
+  stack: string;
 };
 
 export type ValidationData<T> = {

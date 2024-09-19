@@ -6,6 +6,7 @@ import {
 } from "../utils/src/types.ts";
 import { Ajv, ErrorObject } from "ajv";
 import createAjvInstance from "./createAjvInstance.ts";
+import toErrorSchema from "../utils/src/toErrorSchema.ts";
 
 export class Validator<T = any, S extends StrictSchema = Schema> {
   ajv: Ajv;
@@ -45,7 +46,7 @@ export class Validator<T = any, S extends StrictSchema = Schema> {
         property,
         message,
         params, // specific to ajv
-        // stack: `${property} ${message}`.trim(),
+        stack: `${property} ${message}`.trim(),
         schemaPath,
       };
     });
@@ -54,10 +55,10 @@ export class Validator<T = any, S extends StrictSchema = Schema> {
   validateFormData(formData: T | undefined, schema: S): ValidationData<T> {
     const rawErrors = this.rawValidation<ErrorObject>(schema, formData);
     const errors = this.transformValidationErrors(rawErrors.errors);
-    // let errorSchema = toErrorSchema<T>(errors);
+    const errorSchema = toErrorSchema<T>(errors);
     return {
       errors,
-      errorSchema: {},
+      errorSchema: errorSchema,
     };
   }
 }

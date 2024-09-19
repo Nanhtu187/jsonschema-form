@@ -26,6 +26,7 @@ import { Accordion } from "../tailwind/label/accordion";
 import { ErrorField } from "../tailwind/error/errorField.tsx";
 import { Validator } from "../../validator";
 import { BooleanInput } from "../tailwind/input/boolean";
+import { ErrorList } from "../tailwind/error/errorList.tsx";
 
 export interface FormProps<S extends StrictSchema = Schema> {
   onSubmit?: (str: string) => void;
@@ -129,6 +130,7 @@ export const Form = (props: FormProps) => {
   const [schema, setSchema] = useState<Schema>(props.schema);
   const [formData, setFormData] = useState<FormData>();
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState<string[]>([]);
 
   const [pathSchema, setPathSchema] = useState(
     toPathSchema(schema, "", formData),
@@ -173,9 +175,10 @@ export const Form = (props: FormProps) => {
     event.preventDefault();
     const errors = props.validator.validateFormData(formData, schema);
     if (errors.errors.length > 0) {
-      errors.errors.map((error) => {
-        alert(error.property + " " + error.message);
+      const errorMessages = errors.errors.map((error) => {
+        return error.stack.substring(1) || "Unknown Error";
       });
+      setErrors(errorMessages);
       return;
     }
     props.onSubmit
@@ -197,6 +200,7 @@ export const Form = (props: FormProps) => {
   return (
     <div className="bg-white dark:bg-gray-900 min-h-screen p-4">
       <ToggleButton />
+      <ErrorList errors={errors} />
       {!loading && (
         <form onSubmit={onSubmit} className="space-y-4">
           {buildFormFromPathSchema(
