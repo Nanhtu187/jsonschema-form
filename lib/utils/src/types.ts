@@ -45,4 +45,5 @@ export interface BaseInputProps {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   description?: string;
+  errors?: string[];
 }
