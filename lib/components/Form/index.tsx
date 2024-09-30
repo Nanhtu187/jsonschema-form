@@ -105,26 +105,18 @@ export const Form = (props: FormProps) => {
         get(formData, key),
         get(pathSchema, key)[SCHEMA_KEY],
       );
-      if (errors.errors.length > 0) {
-        const errorMessages = errors.errors.map((error) => {
-          return key + " " + error.stack || "Unknown Error";
-        });
-        setErrors((prev) => {
-          return [...new Set([...prev, ...errorMessages])];
-        });
-        setErrorSchema((prev) => {
-          const newValue = get(prev, key, {});
-          merge(newValue, errors.errorSchema);
-          return set(prev, key, newValue);
-        });
-      } else {
-        setErrors((prev) => {
-          return prev.filter((error) => !error.includes(key));
-        });
-        setErrorSchema((prev) => {
-          return set(prev, key, {});
-        });
-      }
+      const errorMessages = errors.errors.map((error) => {
+        return key + " " + error.stack || "Unknown Error";
+      });
+      setErrors((prev) => {
+        return [
+          ...prev.filter((error) => !error.includes(key)),
+          ...errorMessages,
+        ];
+      });
+      setErrorSchema((prev) => {
+        return set(prev, key, errors.errorSchema);
+      });
     }
   };
 
