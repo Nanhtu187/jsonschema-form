@@ -9,7 +9,11 @@ export interface InputProps extends BaseInputProps {
 
 export const InputField = (props: InputProps) => {
   return (
-    <div key={props.label} className="flex flex-col space-y-1">
+    <div
+      key={props.label}
+      className="flex flex-col space-y-1"
+      onBlur={props.onBlur}
+    >
       <div className="flex items-center">
         <KeyLabel label={props.label} />
         {props.description && <TooltipIcon description={props.description} />}

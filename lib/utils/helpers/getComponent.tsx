@@ -7,6 +7,7 @@ export const GetTailwindInputComponent = (
   key: string,
   formData: any,
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+  onBlur: (event: React.FocusEvent<HTMLInputElement>) => void,
   description?: string,
   errors?: string[],
 ): JSX.Element => {
@@ -18,6 +19,7 @@ export const GetTailwindInputComponent = (
         value={formData}
         type={"number"}
         onChange={handleInputChange}
+        onBlur={onBlur}
         description={description}
         errors={errors}
       />
@@ -30,6 +32,7 @@ export const GetTailwindInputComponent = (
         value={formData}
         type={"text"}
         onChange={handleInputChange}
+        onBlur={onBlur}
         description={description}
         errors={errors}
       />
