@@ -42,7 +42,9 @@
             "default": "asdf"
           },
           "age": {
-            "type": "number"
+            "type": "number",
+            "maximum": 100,
+            "minimum": 0
           }
         }
       }

@@ -1,4 +1,3 @@
-// Update the Form component with CSS classes
 import { useEffect, useState } from "react";
 import { toPathSchema } from "../../utils/src/schema/toPathSchema.ts";
 import {
@@ -11,7 +10,7 @@ import {
   SCHEMA_KEY,
   STRING_TYPE,
 } from "../../utils/src/constants.ts";
-import { get, set } from "lodash";
+import { get, merge, set } from "lodash";
 import { PathSchema, StrictSchema, Schema } from "../../utils/src/types.ts";
 import {
   getDefaultValue,
@@ -32,106 +31,16 @@ export interface FormProps<S extends StrictSchema = Schema> {
   onSubmit?: (str: string) => void;
   schema: S;
   validator: Validator;
-}
-
-function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
-  pathSchema: PathSchema<T>,
-  formData: T,
-  handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
-  handleAddField: (
-    event: React.MouseEvent<HTMLButtonElement>,
-    key: string,
-    schema: S,
-  ) => void,
-) {
-  return (
-    <div>
-      {Object.keys(pathSchema).map((key) => {
-        if (key === NAME_KEY || key == SCHEMA_KEY) {
-          return null;
-        }
-        if (typeof get(pathSchema, [key]) === OBJECT_TYPE) {
-          const schema = get(pathSchema, [key]);
-          const data = get(formData, [key]);
-          if (
-            schema[SCHEMA_KEY].type === NUMBER_TYPE ||
-            schema[SCHEMA_KEY].type === STRING_TYPE
-          ) {
-            return GetTailwindInputComponent(
-              schema[SCHEMA_KEY].type,
-              schema[NAME_KEY].substring(1),
-              key,
-              data,
-              handleInputChange,
-              schema[SCHEMA_KEY].description,
-            );
-          } else if (schema[SCHEMA_KEY].type === BOOLEAN_TYPE) {
-            return (
-              <BooleanInput
-                key={schema[NAME_KEY].substring(1)}
-                name={schema[NAME_KEY].substring(1)}
-                label={key}
-                value={formData as boolean}
-                onChange={handleInputChange}
-                description={schema[SCHEMA_KEY].description}
-              />
-            );
-          } else if (
-            schema[SCHEMA_KEY].type === OBJECT_TYPE ||
-            schema[SCHEMA_KEY].type === ARRAY_TYPE
-          ) {
-            return (
-              <Accordion
-                key={key}
-                title={key}
-                description={schema[SCHEMA_KEY].description}
-              >
-                <div className="w-full border-t border-solid border-gray-300 my-4"></div>
-                <div className="ml-4">
-                  {buildFormFromPathSchema(
-                    get(pathSchema, [key]),
-                    get(formData, [key]),
-                    handleInputChange,
-                    handleAddField,
-                  )}
-                </div>
-              </Accordion>
-            );
-          } else if (schema[SCHEMA_KEY].type == NULL_TYPE) {
-            return null;
-          } else {
-            return (
-              <Accordion key={key} title={key}>
-                <ErrorField error={"Unsupported Type"} />
-              </Accordion>
-            );
-          }
-        }
-        return null;
-      })}
-      {pathSchema[SCHEMA_KEY].type == ARRAY_TYPE && (
-        <Button
-          key={`${pathSchema[NAME_KEY]}-button`}
-          onClick={(event) =>
-            handleAddField(
-              event,
-              pathSchema[NAME_KEY],
-              pathSchema[SCHEMA_KEY] as S,
-            )
-          }
-          text={"+"}
-        ></Button>
-      )}
-    </div>
-  );
+  liveValidate?: boolean;
 }
 
 export const Form = (props: FormProps) => {
-  const [schema, setSchema] = useState<Schema>(props.schema);
+  const { schema: rawSchema, onSubmit, validator } = props;
+  const [schema, setSchema] = useState<Schema>(rawSchema);
   const [formData, setFormData] = useState<FormData>();
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([]);
-
+  const [errorSchema, setErrorSchema] = useState({});
   const [pathSchema, setPathSchema] = useState(
     toPathSchema(schema, "", formData),
   );
@@ -171,18 +80,21 @@ export const Form = (props: FormProps) => {
     });
   };
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const errors = props.validator.validateFormData(formData, schema);
+    const errors = validator.validateFormData(formData, schema);
     if (errors.errors.length > 0) {
       const errorMessages = errors.errors.map((error) => {
         return error.stack.substring(1) || "Unknown Error";
       });
       setErrors(errorMessages);
+      setErrorSchema((prev) => {
+        return merge(prev, errors.errorSchema);
+      });
       return;
     }
-    props.onSubmit
-      ? props.onSubmit(JSON.stringify(formData, null, 2))
+    onSubmit
+      ? onSubmit(JSON.stringify(formData, null, 2))
       : console.log(JSON.stringify(formData, null, 2));
   };
 
@@ -192,17 +104,114 @@ export const Form = (props: FormProps) => {
   }, [formData, schema]);
 
   useEffect(() => {
-    setSchema(props.schema);
+    setSchema(schema);
     setFormData(getFormData(schema));
     setLoading(false);
-  }, [props.schema, schema]);
+  }, [schema, schema]);
+
+  function buildFormFromPathSchema<T = any, S extends StrictSchema = Schema>(
+    pathSchema: PathSchema<T>,
+    formData: T,
+    handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+    handleAddField: (
+      event: React.MouseEvent<HTMLButtonElement>,
+      key: string,
+      schema: S,
+    ) => void,
+  ) {
+    return (
+      <div>
+        {Object.keys(pathSchema).map((key) => {
+          if (key === NAME_KEY || key == SCHEMA_KEY) {
+            return null;
+          }
+          if (typeof get(pathSchema, [key]) === OBJECT_TYPE) {
+            const schema = get(pathSchema, [key]);
+            const data = get(formData, [key]);
+            if (
+              schema[SCHEMA_KEY].type === NUMBER_TYPE ||
+              schema[SCHEMA_KEY].type === STRING_TYPE
+            ) {
+              const listErrors = get(
+                errorSchema,
+                schema[NAME_KEY].substring(1),
+              );
+              return GetTailwindInputComponent(
+                schema[SCHEMA_KEY].type,
+                schema[NAME_KEY].substring(1),
+                key,
+                data,
+                handleInputChange,
+                schema[SCHEMA_KEY].description,
+                listErrors && listErrors.__errors,
+              );
+            } else if (schema[SCHEMA_KEY].type === BOOLEAN_TYPE) {
+              return (
+                <BooleanInput
+                  key={schema[NAME_KEY].substring(1)}
+                  name={schema[NAME_KEY].substring(1)}
+                  label={key}
+                  value={formData as boolean}
+                  onChange={handleInputChange}
+                  description={schema[SCHEMA_KEY].description}
+                />
+              );
+            } else if (
+              schema[SCHEMA_KEY].type === OBJECT_TYPE ||
+              schema[SCHEMA_KEY].type === ARRAY_TYPE
+            ) {
+              return (
+                <Accordion
+                  key={key}
+                  title={key}
+                  description={schema[SCHEMA_KEY].description}
+                >
+                  <div className="w-full border-t border-solid border-gray-300 my-4"></div>
+                  <div className="ml-4">
+                    {buildFormFromPathSchema(
+                      get(pathSchema, [key]),
+                      get(formData, [key]),
+                      handleInputChange,
+                      handleAddField,
+                    )}
+                  </div>
+                </Accordion>
+              );
+            } else if (schema[SCHEMA_KEY].type == NULL_TYPE) {
+              return null;
+            } else {
+              return (
+                <Accordion key={key} title={key}>
+                  <ErrorField error={"Unsupported Type"} />
+                </Accordion>
+              );
+            }
+          }
+          return null;
+        })}
+        {pathSchema[SCHEMA_KEY].type == ARRAY_TYPE && (
+          <Button
+            key={`${pathSchema[NAME_KEY]}-button`}
+            onClick={(event) =>
+              handleAddField(
+                event,
+                pathSchema[NAME_KEY],
+                pathSchema[SCHEMA_KEY] as S,
+              )
+            }
+            text={"+"}
+          ></Button>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white dark:bg-gray-900 min-h-screen p-4">
       <ToggleButton />
       <ErrorList errors={errors} />
       {!loading && (
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form onSubmit={onFormSubmit} className="space-y-4">
           {buildFormFromPathSchema(
             pathSchema,
             formData,

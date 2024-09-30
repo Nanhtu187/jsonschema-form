@@ -1,6 +1,7 @@
 import { KeyLabel } from "../../label/key";
 import { BaseInputProps } from "../../../../utils/src/types.ts";
 import TooltipIcon from "../../icon/tooltipIcon.tsx";
+import { ErrorField } from "../../error/errorField.tsx";
 
 export interface InputProps extends BaseInputProps {
   type: string;
@@ -20,6 +21,12 @@ export const InputField = (props: InputProps) => {
         onChange={props.onChange}
         className="p-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
       />
+      <div>
+        {props.errors &&
+          props.errors.map((error: string, index: number) => (
+            <ErrorField error={error} key={index} />
+          ))}
+      </div>
     </div>
   );
 };
