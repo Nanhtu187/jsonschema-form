@@ -25,6 +25,7 @@ function App() {
           validator={validator}
           schema={schema}
           onSubmit={(str: string) => console.log(str)}
+          liveValidate={true}
         />
       )}
     </div>

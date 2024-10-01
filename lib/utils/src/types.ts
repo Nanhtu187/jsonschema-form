@@ -1,7 +1,7 @@
 import { JSONSchema7 } from "json-schema";
 
-export type GenericObjectType = {
-  [name: string]: any;
+export type GenericObjectType<T = any> = {
+  [name: string]: T;
 };
 export type StrictSchema = JSONSchema7;
 export type Schema = StrictSchema & GenericObjectType;
@@ -16,10 +16,10 @@ export type PathSchema<T = any> = FieldPath & {
   [key in keyof T]?: PathSchema<T[key]>;
 };
 
-export type ValidationError = {
+export type ValidationError<T = any> = {
   name?: string;
   message?: string;
-  params?: any;
+  params?: T;
   property?: string;
   schemaPath?: string;
   stack: string;
@@ -38,11 +38,12 @@ export type FieldErrors = {
   __errors?: FieldError[];
 };
 
-export interface BaseInputProps {
+export interface BaseInputProps<T = any> {
   name: string;
   label: string;
-  value: any;
+  value: T;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   className?: string;
   description?: string;
   errors?: string[];

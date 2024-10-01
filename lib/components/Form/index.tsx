@@ -35,7 +35,7 @@ export interface FormProps<S extends StrictSchema = Schema> {
 }
 
 export const Form = (props: FormProps) => {
-  const { schema: rawSchema, onSubmit, validator } = props;
+  const { schema: rawSchema, onSubmit, validator, liveValidate } = props;
   const [schema, setSchema] = useState<Schema>(rawSchema);
   const [formData, setFormData] = useState<FormData>();
   const [loading, setLoading] = useState(true);
@@ -98,6 +98,28 @@ export const Form = (props: FormProps) => {
       : console.log(JSON.stringify(formData, null, 2));
   };
 
+  const onBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    if (liveValidate) {
+      const key = event.target?.name;
+      const errors = validator.validateFormData(
+        get(formData, key),
+        get(pathSchema, key)[SCHEMA_KEY],
+      );
+      const errorMessages = errors.errors.map((error) => {
+        return key + " " + error.stack || "Unknown Error";
+      });
+      setErrors((prev) => {
+        return [
+          ...prev.filter((error) => !error.includes(key)),
+          ...errorMessages,
+        ];
+      });
+      setErrorSchema((prev) => {
+        return set(prev, key, errors.errorSchema);
+      });
+    }
+  };
+
   useEffect(() => {
     // Update pathSchema after formData has been updated
     setPathSchema(toPathSchema(schema, "", formData));
@@ -142,6 +164,7 @@ export const Form = (props: FormProps) => {
                 key,
                 data,
                 handleInputChange,
+                onBlur,
                 schema[SCHEMA_KEY].description,
                 listErrors && listErrors.__errors,
               );
@@ -153,6 +176,7 @@ export const Form = (props: FormProps) => {
                   label={key}
                   value={formData as boolean}
                   onChange={handleInputChange}
+                  onBlur={onBlur}
                   description={schema[SCHEMA_KEY].description}
                 />
               );

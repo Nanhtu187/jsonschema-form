@@ -7,32 +7,37 @@ export const GetTailwindInputComponent = (
   key: string,
   formData: any,
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+  onBlur: (event: React.FocusEvent<HTMLInputElement>) => void,
   description?: string,
   errors?: string[],
-): JSX.Element => {
-  if (type === NUMBER_TYPE || type === INTEGER_TYPE) {
-    return (
-      <InputField
-        name={name}
-        label={key}
-        value={formData}
-        type={"number"}
-        onChange={handleInputChange}
-        description={description}
-        errors={errors}
-      />
-    );
-  } else {
-    return (
-      <InputField
-        name={name}
-        label={key}
-        value={formData}
-        type={"text"}
-        onChange={handleInputChange}
-        description={description}
-        errors={errors}
-      />
-    );
+) => {
+  switch (type) {
+    case NUMBER_TYPE:
+    case INTEGER_TYPE:
+      return (
+        <InputField
+          name={name}
+          label={key}
+          value={formData}
+          type={"number"}
+          onChange={handleInputChange}
+          onBlur={onBlur}
+          description={description}
+          errors={errors}
+        />
+      );
+    default:
+      return (
+        <InputField
+          name={name}
+          label={key}
+          value={formData}
+          type={"text"}
+          onChange={handleInputChange}
+          onBlur={onBlur}
+          description={description}
+          errors={errors}
+        />
+      );
   }
 };

@@ -7,23 +7,32 @@ export interface InputProps extends BaseInputProps {
   type: string;
 }
 
-export const InputField = (props: InputProps) => {
+export const InputField = ({
+  label,
+  onBlur,
+  description,
+  name,
+  value,
+  type,
+  onChange,
+  errors,
+}: InputProps) => {
   return (
-    <div key={props.label} className="flex flex-col space-y-1">
+    <div key={label} className="flex flex-col space-y-1" onBlur={onBlur}>
       <div className="flex items-center">
-        <KeyLabel label={props.label} />
-        {props.description && <TooltipIcon description={props.description} />}
+        <KeyLabel label={label} />
+        {description && <TooltipIcon description={description} />}
       </div>
       <input
-        name={props.name}
-        value={props.value ?? ""}
-        type={props.type}
-        onChange={props.onChange}
+        name={name}
+        value={value ?? ""}
+        type={type}
+        onChange={onChange}
         className="p-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
       />
       <div>
-        {props.errors &&
-          props.errors.map((error: string, index: number) => (
+        {errors &&
+          errors.map((error: string, index: number) => (
             <ErrorField error={error} key={index} />
           ))}
       </div>
