@@ -1,5 +1,5 @@
 {
-  "name": "@nanhtu/jsonschema-form",
+  "name": "@nanhtu/formgen",
   "private": false,
   "version": "0.0.1",
   "type": "module",
