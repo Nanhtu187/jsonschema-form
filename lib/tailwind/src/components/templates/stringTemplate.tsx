@@ -25,7 +25,9 @@ export const StringTemplate: React.FC<{
   return (
     <div>
       <input
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => {
+          setValue(e.target.value);
+        }}
         value={value || ""}
         type="text"
         placeholder={schema.description || ""}

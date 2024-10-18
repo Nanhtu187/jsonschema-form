@@ -13,7 +13,7 @@ export const NumberTemplate: React.FC<{
   const onBlur = (event: React.FocusEvent<HTMLInputElement>) => {
     if (liveValidate) {
       try {
-        schema.parse(event.target.value);
+        schema.parse(Number(event.target.value));
         setErrorsAtPath([]);
       } catch (validationErrors) {
         const errors = validationErrors as z.ZodError;
@@ -25,7 +25,9 @@ export const NumberTemplate: React.FC<{
   return (
     <div>
       <input
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) =>
+          setValue(e.target.value ? Number(e.target.value) : null)
+        }
         value={value ?? ""}
         type="number"
         placeholder={schema.description || ""}

@@ -44,7 +44,6 @@ export const BaseFormRoot: React.FC<FormRootProps> = ({
       onError(zodErrors.issues, formData);
     }
   };
-
   return (
     <form onSubmit={handleSubmit}>
       {isObjectSchema(resolvedSchema) &&
@@ -62,5 +61,7 @@ export const BaseFormRoot: React.FC<FormRootProps> = ({
 };
 
 const isObjectSchema = (schema: z.ZodTypeAny): schema is z.ZodObject<any> => {
-  return resolveSchema(schema) instanceof z.ZodObject;
+  return (
+    resolveSchema(schema)._def.typeName === z.ZodFirstPartyTypeKind.ZodObject
+  );
 };

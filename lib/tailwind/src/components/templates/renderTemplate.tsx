@@ -1,8 +1,8 @@
 import React from "react";
-import { z } from "zod";
 import { RenderTemplateProps } from "./type";
 import { useTemplates } from "../..";
 import { mapToPrimaryType, resolveSchema } from "@nanhtu/utils";
+import { z } from "zod";
 
 export const RenderTemplate: React.FC<RenderTemplateProps> = ({
   schema,
@@ -17,11 +17,10 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
     ArrayTemplate,
   } = useTemplates();
   const resolvedSchema = mapToPrimaryType(resolveSchema(schema));
-
   if (
-    resolvedSchema instanceof z.ZodString ||
-    resolvedSchema instanceof z.ZodDate ||
-    resolvedSchema instanceof z.ZodEnum
+    resolvedSchema._def.typeName == z.ZodFirstPartyTypeKind.ZodString ||
+    resolvedSchema._def.typeName == z.ZodFirstPartyTypeKind.ZodDate ||
+    resolvedSchema._def.typeName == z.ZodFirstPartyTypeKind.ZodEnum
   ) {
     return (
       <StringTemplate
@@ -30,7 +29,9 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
         liveValidate={liveValidate}
       />
     );
-  } else if (resolvedSchema instanceof z.ZodNumber) {
+  } else if (
+    resolvedSchema._def.typeName == z.ZodFirstPartyTypeKind.ZodNumber
+  ) {
     return (
       <NumberTemplate
         schema={resolvedSchema}
@@ -38,7 +39,9 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
         liveValidate={liveValidate}
       />
     );
-  } else if (resolvedSchema instanceof z.ZodBoolean) {
+  } else if (
+    resolvedSchema._def.typeName == z.ZodFirstPartyTypeKind.ZodBoolean
+  ) {
     return (
       <BooleanTemplate
         schema={resolvedSchema}
@@ -46,7 +49,9 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
         liveValidate={liveValidate}
       />
     );
-  } else if (resolvedSchema instanceof z.ZodObject) {
+  } else if (
+    resolvedSchema._def.typeName == z.ZodFirstPartyTypeKind.ZodObject
+  ) {
     return (
       <ObjectTemplate
         schema={resolvedSchema}
@@ -54,7 +59,7 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
         liveValidate={liveValidate}
       />
     );
-  } else if (resolvedSchema instanceof z.ZodArray) {
+  } else if (resolvedSchema._def.typeName == z.ZodFirstPartyTypeKind.ZodArray) {
     return (
       <ArrayTemplate
         schema={resolvedSchema}
