@@ -15,11 +15,12 @@ export const ArrayTemplate: React.FC<{
   );
   const RenderTemplate = useRenderTemplate();
   const innerSchema = schema.element;
+  const isValidValue = Array.isArray(value) && value.length > 0;
 
   return (
     <div>
       {errors && <ErrorsListTemplate errors={errors} />}
-      {Array.isArray(value) && value.length > 0 ? (
+      {isValidValue ? (
         value.map((_, index) => (
           <div key={index}>
             <RenderTemplate

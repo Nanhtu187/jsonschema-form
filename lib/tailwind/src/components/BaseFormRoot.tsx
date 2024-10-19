@@ -2,7 +2,7 @@ import { resolveSchema } from "@nanhtu/utils";
 import z from "zod";
 import { FormRootProps } from "./templates";
 import { FormState, useFormContext, useRenderTemplate } from "..";
-import React from "react";
+import React, { useMemo } from "react";
 
 export const BaseFormRoot: React.FC<FormRootProps> = ({
   onSubmit,
@@ -10,12 +10,12 @@ export const BaseFormRoot: React.FC<FormRootProps> = ({
   liveValidate,
 }) => {
   // const readonly = useFormContext((state: FormState) => state.readonly);
-  const schema = useFormContext((state: FormState) => state.schema);
-  const formData = useFormContext((state: FormState) => state.formData);
-  const setErrors = useFormContext((state: FormState) => state.setErrors);
+  const { schema, formData, setErrors } = useFormContext(
+    (state: FormState) => state,
+  );
   const RenderTemplate = useRenderTemplate();
 
-  const resolvedSchema = resolveSchema(schema);
+  const resolvedSchema = useMemo(() => resolveSchema(schema), [schema]);
 
   // if (readonly) {
   //   return (
