@@ -12,6 +12,7 @@ import React, { useContext, useRef } from "react";
 import { getErrorsAtPath, setErrorsAtPath } from "./getErrorAtPath";
 import { generateInitialData } from "./generateInitialData";
 import { z } from "zod";
+import { useStore } from "zustand";
 
 export const createFormProviderAndHooks = (
   BaseRenderTemplate: React.ComponentType<RenderTemplateProps>,
@@ -59,7 +60,7 @@ export const createFormProviderAndHooks = (
     if (!store) {
       throw new Error("useFormContext must be used within a FormProvider");
     }
-    return selector(store.getState());
+    return useStore(store, selector);
   };
 
   const useFormDataAtPath = (
@@ -165,6 +166,7 @@ export const createFormProviderAndHooks = (
     formRoot: FormRoot = BaseFormRoot,
     readonly = false,
     renderTemplate = BaseRenderTemplate,
+    liveValidate = false,
   }) => {
     if (!FormRoot) {
       console.error(
@@ -202,7 +204,11 @@ export const createFormProviderAndHooks = (
         readonly={readonly}
         renderTemplate={renderTemplate}
       >
-        <FormRoot onSubmit={onSubmit} onError={onError} live/>
+        <FormRoot
+          onSubmit={onSubmit}
+          onError={onError}
+          liveValidate={liveValidate}
+        />
       </FormProvider>
     );
   };

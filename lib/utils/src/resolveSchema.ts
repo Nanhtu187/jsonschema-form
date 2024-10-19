@@ -28,7 +28,6 @@ export const mapToPrimaryType = (
 ): z.ZodFirstPartySchemaTypes => {
   switch (schema._def.typeName) {
     case z.ZodFirstPartyTypeKind.ZodLiteral:
-      return resolveSchema(schema);
     case z.ZodFirstPartyTypeKind.ZodEnum:
       return resolveSchema(schema);
     case z.ZodFirstPartyTypeKind.ZodUnion:

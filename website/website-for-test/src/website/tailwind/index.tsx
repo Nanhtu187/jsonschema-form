@@ -10,6 +10,7 @@ export const TailwindExample = () => {
         schema={zodSchemaBasic}
         onSubmit={(data: any) => console.log("Zod:", data)}
         onError={(errors: any) => console.error("Zod:", errors)}
+        liveValidate={true}
       />
     </div>
   );

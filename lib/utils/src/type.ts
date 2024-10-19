@@ -20,11 +20,13 @@ export type FormProps = {
   formRoot?: React.FC<FormRootProps>;
   readonly?: boolean;
   renderTemplate?: React.ComponentType<RenderTemplateProps>;
+  liveValidate?: boolean;
 };
 
 export type FormRootProps = {
   onSubmit: (data: { [key: string]: unknown }) => void;
   onError: (errors: z.ZodIssue[], data?: { [key: string]: unknown }) => void;
+  liveValidate?: boolean;
 };
 
 export interface RenderTemplateProps {
@@ -41,6 +43,7 @@ export interface FormProviderProps {
   templates?: { [key: string]: React.ComponentType<any> };
   readonly?: boolean;
   renderTemplate?: React.ComponentType<RenderTemplateProps>;
+  liveValidate?: boolean;
 }
 
 export const TemplatesContext = createContext<{

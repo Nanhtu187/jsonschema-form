@@ -464,7 +464,7 @@ export const zodSchemaBasic = z.object({
     .min(1)
     .max(100)
     .describe("The person's first name.")
-    .default("John"),
+    .default("John Doe"),
   lastName: z
     .string()
     .regex(new RegExp("^[A-Za-z]+$"))

@@ -21,7 +21,7 @@ export const createFormStore = (
     readonly: readonly || false,
     setFormData: (path, value) =>
       set((state) => {
-        const target = { ...state.formData };
+        const target = JSON.parse(JSON.stringify(state.formData)); // Deep clone the state
         let current = target;
 
         path.slice(0, -1).forEach((key) => {
@@ -32,7 +32,6 @@ export const createFormStore = (
         });
 
         current[path[path.length - 1]] = value;
-
         return { formData: target };
       }),
     setErrors: (errors) => set({ errors }),
