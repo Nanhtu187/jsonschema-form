@@ -3,7 +3,7 @@ import z from "zod";
 import { FormRootProps } from "./templates";
 import { FormState, useFormContext, useRenderTemplate } from "..";
 import React, { useMemo } from "react";
-import startCase from "lodash";
+import _ from "lodash";
 
 export const BaseFormRoot: React.FC<FormRootProps> = ({
   onSubmit,
@@ -40,7 +40,7 @@ export const BaseFormRoot: React.FC<FormRootProps> = ({
               schema={resolvedSchema.shape[key]}
               path={[key]}
               liveValidate={liveValidate}
-              title={startCase(key).startCase()}
+              title={_.startCase(key)}
             />
           ))}
         <button

@@ -3,7 +3,7 @@ import { useErrorsAtPath } from "../..";
 import { ErrorsListTemplate } from "./errorsListTemplate";
 import { RenderTemplate } from "./renderTemplate";
 import React, { useState } from "react";
-import startCase from "lodash";
+import _ from "lodash";
 
 export const ObjectTemplate: React.FC<{
   schema: z.ZodObject<any>;
@@ -47,7 +47,7 @@ export const ObjectTemplate: React.FC<{
                 schema={schema.shape[key]}
                 path={[...path, key]}
                 liveValidate={liveValidate}
-                title={startCase(key).startCase()}
+                title={_.startCase(key)}
               />
             ))}
         </div>
