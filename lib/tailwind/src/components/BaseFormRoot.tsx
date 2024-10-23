@@ -3,34 +3,19 @@ import z from "zod";
 import { FormRootProps } from "./templates";
 import { FormState, useFormContext, useRenderTemplate } from "..";
 import React, { useMemo } from "react";
+import startCase from "lodash";
 
 export const BaseFormRoot: React.FC<FormRootProps> = ({
   onSubmit,
   onError,
   liveValidate,
 }) => {
-  // const readonly = useFormContext((state: FormState) => state.readonly);
   const { schema, formData, setErrors } = useFormContext(
     (state: FormState) => state,
   );
   const RenderTemplate = useRenderTemplate();
 
   const resolvedSchema = useMemo(() => resolveSchema(schema), [schema]);
-
-  // if (readonly) {
-  //   return (
-  //     <div>
-  //       {isObjectSchema(resolvedSchema) &&
-  //         Object.keys(resolvedSchema.shape).map((key) => (
-  //           <RenderTemplate
-  //             key={key}
-  //             schema={resolvedSchema.shape[key]}
-  //             path={[key]}
-  //           />
-  //         ))}
-  //     </div>
-  //   );
-  // }
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -44,19 +29,28 @@ export const BaseFormRoot: React.FC<FormRootProps> = ({
       onError(zodErrors.issues, formData);
     }
   };
+
   return (
-    <form onSubmit={handleSubmit}>
-      {isObjectSchema(resolvedSchema) &&
-        Object.keys(resolvedSchema.shape).map((key) => (
-          <RenderTemplate
-            key={key}
-            schema={resolvedSchema.shape[key]}
-            path={[key]}
-            liveValidate={liveValidate}
-          />
-        ))}
-      <button type="submit">Submit</button>
-    </form>
+    <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {isObjectSchema(resolvedSchema) &&
+          Object.keys(resolvedSchema.shape).map((key) => (
+            <RenderTemplate
+              key={key}
+              schema={resolvedSchema.shape[key]}
+              path={[key]}
+              liveValidate={liveValidate}
+              title={startCase(key).startCase()}
+            />
+          ))}
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
   );
 };
 

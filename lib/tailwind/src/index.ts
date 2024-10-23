@@ -7,6 +7,7 @@ import {
   BaseTemplates,
   RenderTemplate as DefaultRenderTemplate,
 } from "./components";
+import "./index.css";
 
 const {
   FormProvider,

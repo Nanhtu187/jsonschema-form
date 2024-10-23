@@ -7,7 +7,8 @@ export const NumberTemplate: React.FC<{
   schema: z.ZodNumber;
   path: string[];
   liveValidate?: boolean;
-}> = ({ schema, path, liveValidate }) => {
+  title?: string;
+}> = ({ schema, path, liveValidate, title }) => {
   const [value, setValue] = useFormDataAtPath(path);
   const [errors, setErrorsAtPath] = useErrorsAtPath(path);
   const onBlur = (event: React.FocusEvent<HTMLInputElement>) => {
@@ -23,7 +24,12 @@ export const NumberTemplate: React.FC<{
   };
 
   return (
-    <div>
+    <div className="mb-4">
+      {title && (
+        <label className="block text-sm font-medium text-gray-700 dark:text-white">
+          {title}
+        </label>
+      )}
       <input
         onChange={(e) =>
           setValue(e.target.value ? Number(e.target.value) : null)
@@ -32,8 +38,13 @@ export const NumberTemplate: React.FC<{
         type="number"
         placeholder={schema.description || ""}
         onBlur={onBlur}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
       />
-      {schema.description && <small>{schema.description}</small>}
+      {schema.description && (
+        <small className="text-gray-500 dark:text-gray-400">
+          {schema.description}
+        </small>
+      )}
       {errors && <ErrorsListTemplate errors={errors} />}
     </div>
   );
