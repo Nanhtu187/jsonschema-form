@@ -8,6 +8,7 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
   schema,
   path,
   liveValidate,
+  title,
 }) => {
   const {
     StringTemplate,
@@ -26,6 +27,7 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
           schema={resolvedSchema}
           path={path}
           liveValidate={liveValidate}
+          title={title}
         />
       );
     case z.ZodFirstPartyTypeKind.ZodNumber:
@@ -34,6 +36,7 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
           schema={resolvedSchema}
           path={path}
           liveValidate={liveValidate}
+          title={title}
         />
       );
     case z.ZodFirstPartyTypeKind.ZodBoolean:
@@ -42,6 +45,7 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
           schema={resolvedSchema}
           path={path}
           liveValidate={liveValidate}
+          title={title}
         />
       );
     case z.ZodFirstPartyTypeKind.ZodObject:
@@ -50,6 +54,7 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
           schema={resolvedSchema}
           path={path}
           liveValidate={liveValidate}
+          title={title}
         />
       );
     case z.ZodFirstPartyTypeKind.ZodArray:
@@ -58,6 +63,7 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
           schema={resolvedSchema}
           path={path}
           liveValidate={liveValidate}
+          title={title}
         />
       );
     default:
