@@ -1,32 +1,37 @@
+import { useState } from "react";
 import { Form } from "@nanhtu/tailwind";
-import { zodSchemaBasic } from "./schema";
-// import { SwitchToReadonly } from "../components/SwitchToReadonly";
+import { zodSchema } from "./schema";
 
 export const TailwindExample = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [liveValidate, setLiveValidate] = useState(true);
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
   return (
-    <div>
-      <h2>Zod Schema Form</h2>
+    <div className={isDarkMode ? "dark" : ""}>
+      <div>
+        <button onClick={toggleDarkMode} className="">
+          Toggle Dark Mode
+        </button>
+      </div>
+      <div>
+        <label>
+          <input
+            type="checkbox"
+            checked={liveValidate}
+            onChange={() => setLiveValidate(!liveValidate)}
+          />
+          Live Validate
+        </label>
+      </div>
       <Form
-        schema={zodSchemaBasic}
+        schema={zodSchema}
         onSubmit={(data: any) => console.log("Zod:", data)}
         onError={(errors: any) => console.error("Zod:", errors)}
-        liveValidate={true}
+        liveValidate={liveValidate}
       />
     </div>
   );
 };
-
-// const ZodSchemaComplexExample = () => {
-//   return (
-//     <div>
-//       <h2>Complex Zod Schema Form</h2>
-//       <FormProvider schema={zodSchema} initialData={initialFormData}>
-//         <SwitchToReadonly contextHook={useFormContext} />
-//         <BaseFormRoot
-//           onSubmit={(data) => console.log("Zod:", data)}
-//           onError={(errors) => console.error("Zod:", errors)}
-//         />
-//       </FormProvider>
-//     </div>
-//   );
-// };
