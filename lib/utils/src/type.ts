@@ -33,6 +33,7 @@ export interface RenderTemplateProps {
   schema: z.ZodTypeAny;
   path: string[];
   liveValidate?: boolean;
+  title?: string;
 }
 
 export interface FormProviderProps {
