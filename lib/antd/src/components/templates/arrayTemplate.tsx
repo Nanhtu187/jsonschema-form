@@ -3,6 +3,16 @@ import { useArrayTemplate, useRenderTemplate } from "../..";
 import { generateInitialData } from "@nanhtu/utils";
 import { ErrorsListTemplate } from "./errorsListTemplate";
 import React, { useState } from "react";
+import { Button, Collapse, Tooltip, Typography } from "antd";
+import {
+  PlusOutlined,
+  MinusOutlined,
+  UpOutlined,
+  DownOutlined,
+} from "@ant-design/icons";
+
+const { Panel } = Collapse;
+const { Text } = Typography;
 
 export const ArrayTemplate: React.FC<{
   schema: z.ZodArray<any>;
@@ -24,67 +34,63 @@ export const ArrayTemplate: React.FC<{
   };
 
   return (
-    <div className="mb-4">
-      <div
-        className="flex justify-between items-center cursor-pointer p-2 border-b"
-        onClick={toggleAccordion}
-      >
-        {title && (
-          <label className="block text-sm font-medium text-gray-700 dark:text-white">
-            {title}
-          </label>
-        )}
-        <button className="text-gray-500 dark:text-gray-400">
-          {isOpen ? "▲" : "▼"}
-        </button>
-      </div>
-      {isOpen && (
-        <div className="mt-2 p-2 border rounded-md">
+    <div>
+      <Collapse activeKey={isOpen ? "1" : undefined} onChange={toggleAccordion}>
+        <Panel
+          header={
+            title && (
+              <Tooltip title={schema.description}>
+                <Text strong>{title}</Text>
+              </Tooltip>
+            )
+          }
+          key="1"
+        >
           {errors && <ErrorsListTemplate errors={errors} />}
           {isValidValue ? (
             value.map((_, index) => (
-              <div key={index} className="mb-2 p-2 border rounded-md">
+              <div key={index}>
                 <RenderTemplate
                   schema={innerSchema}
                   path={[...path, index.toString()]}
                   liveValidate={liveValidate}
                   title={title + " " + index.toString()}
                 />
-                <div className="flex space-x-2 mt-2">
-                  <button
+                <div>
+                  <Button
+                    type="link"
                     onClick={() => removeItem(index)}
-                    className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    icon={<MinusOutlined />}
                   >
                     Remove Item
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    type="link"
                     onClick={() => moveItem(index, "up")}
-                    className="px-2 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+                    icon={<UpOutlined />}
                   >
                     Move Up
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    type="link"
                     onClick={() => moveItem(index, "down")}
-                    className="px-2 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+                    icon={<DownOutlined />}
                   >
                     Move Down
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))
           ) : (
-            <div className="text-gray-500">No items available</div>
+            <Text type="secondary">No items available</Text>
           )}
           <div className="mt-2">
-            <button
-              onClick={addItem}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
+            <Button type="dashed" onClick={addItem} icon={<PlusOutlined />}>
               Add Item
-            </button>
+            </Button>
           </div>
-        </div>
-      )}
+        </Panel>
+      </Collapse>
     </div>
   );
 };

@@ -3,7 +3,11 @@ import { useErrorsAtPath } from "../..";
 import { ErrorsListTemplate } from "./errorsListTemplate";
 import { RenderTemplate } from "./renderTemplate";
 import React, { useState } from "react";
+import { Collapse, Tooltip, Typography } from "antd";
 import _ from "lodash";
+
+const { Panel } = Collapse;
+const { Text } = Typography;
 
 export const ObjectTemplate: React.FC<{
   schema: z.ZodObject<any>;
@@ -17,28 +21,20 @@ export const ObjectTemplate: React.FC<{
   const toggleAccordion = () => {
     setIsOpen(!isOpen);
   };
+
   return (
-    <div className="mb-4">
-      <div
-        className="flex justify-between items-center cursor-pointer p-2 border-b"
-        onClick={toggleAccordion}
-      >
-        {title && (
-          <label className="block text-sm font-medium text-gray-700 dark:text-white">
-            {title}
-          </label>
-        )}
-        <button className="text-gray-500 dark:text-gray-400">
-          {isOpen ? "▲" : "▼"}
-        </button>
-      </div>
-      {isOpen && (
-        <div className="mt-2 p-2 border rounded-md">
-          {schema.description && (
-            <small className="block mb-2 text-gray-500 dark:text-gray-400">
-              {schema.description}
-            </small>
-          )}
+    <div>
+      <Collapse activeKey={isOpen ? "1" : undefined} onChange={toggleAccordion}>
+        <Panel
+          header={
+            title && (
+              <Tooltip title={schema.description}>
+                <Text strong>{title}</Text>
+              </Tooltip>
+            )
+          }
+          key="1"
+        >
           {errors && <ErrorsListTemplate errors={errors} />}
           {schema.shape &&
             Object.keys(schema.shape).map((key) => (
@@ -50,8 +46,8 @@ export const ObjectTemplate: React.FC<{
                 title={_.startCase(key)}
               />
             ))}
-        </div>
-      )}
+        </Panel>
+      </Collapse>
     </div>
   );
 };
