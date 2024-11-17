@@ -33,7 +33,7 @@ export const NumberTemplate: React.FC<{
     >
       <Input
         onChange={(e) => {
-          setValue(e.target.value);
+          setValue(e.target.value ? Number(e.target.value) : null);
         }}
         value={value || ""}
         type="number"
