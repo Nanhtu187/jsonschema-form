@@ -3,7 +3,7 @@ import { useArrayTemplate, useRenderTemplate } from "../..";
 import { generateInitialData } from "@nanhtu/utils";
 import { ErrorsListTemplate } from "./errorsListTemplate";
 import React, { useState } from "react";
-import { Button, Collapse, Tooltip, Typography } from "antd";
+import { Button, Collapse, Form, Tooltip, Typography } from "antd";
 import {
   PlusOutlined,
   MinusOutlined,
@@ -34,7 +34,7 @@ export const ArrayTemplate: React.FC<{
   };
 
   return (
-    <div>
+    <Form.Item>
       <Collapse activeKey={isOpen ? "1" : undefined} onChange={toggleAccordion}>
         <Panel
           header={
@@ -91,6 +91,7 @@ export const ArrayTemplate: React.FC<{
           </div>
         </Panel>
       </Collapse>
-    </div>
+    </Form.Item>
+
   );
 };

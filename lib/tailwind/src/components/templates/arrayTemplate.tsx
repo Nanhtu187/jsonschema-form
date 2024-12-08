@@ -57,18 +57,22 @@ export const ArrayTemplate: React.FC<{
                   >
                     Remove Item
                   </button>
-                  <button
-                    onClick={() => moveItem(index, "up")}
-                    className="px-2 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
-                  >
-                    Move Up
-                  </button>
-                  <button
-                    onClick={() => moveItem(index, "down")}
-                    className="px-2 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
-                  >
-                    Move Down
-                  </button>
+                  {index > 0 && (
+                    <button
+                      onClick={() => moveItem(index, "up")}
+                      className="px-2 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+                    >
+                      Move Up
+                    </button>
+                  )}
+                  {index < value.length - 1 && (
+                    <button
+                      onClick={() => moveItem(index, "down")}
+                      className="px-2 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+                    >
+                      Move Down
+                    </button>
+                  )}
                 </div>
               </div>
             ))

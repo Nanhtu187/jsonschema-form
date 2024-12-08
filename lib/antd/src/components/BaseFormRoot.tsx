@@ -33,15 +33,17 @@ export const BaseFormRoot: React.FC<FormRootProps> = ({
   return (
     <Form onFinish={handleSubmit}>
       {isObjectSchema(resolvedSchema) &&
-        Object.keys(resolvedSchema.shape).map((key) => (
-          <RenderTemplate
-            key={key}
-            schema={resolvedSchema.shape[key]}
-            path={[key]}
-            liveValidate={liveValidate}
-            title={_.startCase(key)}
-          />
-        ))}
+        Object.keys(resolvedSchema.shape).map((key) => {
+          return (
+            <RenderTemplate
+              key={key}
+              schema={resolvedSchema.shape[key]}
+              path={[key]}
+              liveValidate={liveValidate}
+              title={_.startCase(key)}
+            />
+          );
+        })}
       <Form.Item>
         <Button type="primary" htmlType="submit">
           Submit

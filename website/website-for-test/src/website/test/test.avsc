@@ -1,0 +1,27 @@
+{
+     "type": "record",
+     "namespace": "com.example",
+     "name": "FullName",
+     "fields": [
+      { "name": "first", "type": "string" },
+      { "name": "last", "type": "string" },
+      {
+        "name": "age", 
+        "type": {
+            "type": "record",
+            "name": "age",
+            "fields": [
+                { "name": "years", "type": "int" },
+                 { "name": "months", "type": "int" }
+            ]
+        }
+      },
+      {
+        "name": "children",
+        "type": {
+          "type":"array",
+          "items": "string"
+        }
+      }
+     ]
+}

@@ -3,18 +3,19 @@ import { useErrorsAtPath } from "../..";
 import { ErrorsListTemplate } from "./errorsListTemplate";
 import { RenderTemplate } from "./renderTemplate";
 import React, { useState } from "react";
-import { Collapse, Tooltip, Typography } from "antd";
+import { Collapse, Form } from "antd";
 import _ from "lodash";
 
 const { Panel } = Collapse;
-const { Text } = Typography;
+// const { Text } = Typography;
 
 export const ObjectTemplate: React.FC<{
   schema: z.ZodObject<any>;
   path: string[];
   liveValidate?: boolean;
   title?: string;
-}> = ({ schema, path, liveValidate, title }) => {
+  isRequired: boolean;
+}> = ({ schema, path, liveValidate, title, isRequired }) => {
   const [errors] = useErrorsAtPath(path);
   const [isOpen, setIsOpen] = useState(true);
 
@@ -23,15 +24,17 @@ export const ObjectTemplate: React.FC<{
   };
 
   return (
-    <div>
+    <Form.Item>
       <Collapse activeKey={isOpen ? "1" : undefined} onChange={toggleAccordion}>
         <Panel
           header={
-            title && (
-              <Tooltip title={schema.description}>
-                <Text strong>{title}</Text>
-              </Tooltip>
-            )
+            <Form.Item
+              required={isRequired}
+              label={title}
+              tooltip={schema.description}
+              wrapperCol={{ flex: 1 }}
+              colon={false}
+            />
           }
           key="1"
         >
@@ -48,6 +51,6 @@ export const ObjectTemplate: React.FC<{
             ))}
         </Panel>
       </Collapse>
-    </div>
+    </Form.Item>
   );
 };

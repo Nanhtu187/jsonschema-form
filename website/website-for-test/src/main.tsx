@@ -4,6 +4,7 @@ import App from "./App.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { TailwindExample } from "./website/tailwind";
 import { AntdExample } from "./website/antd";
+import { Test } from "./website/test";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
   {
     path: "test-antd",
     element: <AntdExample />,
+  },
+  {
+    path: "test",
+    element: <Test />,
   },
 ]);
 

@@ -27,7 +27,7 @@ export const generateInitialData = (schema: ZodTypeAny): any => {
     case z.ZodFirstPartyTypeKind.ZodNumber:
       return undefined;
     case z.ZodFirstPartyTypeKind.ZodBoolean:
-      return undefined;
+      return false;
     case z.ZodFirstPartyTypeKind.ZodDate:
       return undefined;
     case z.ZodFirstPartyTypeKind.ZodLiteral:
@@ -45,6 +45,8 @@ export const generateInitialData = (schema: ZodTypeAny): any => {
       }
       return result;
     }
+    case z.ZodFirstPartyTypeKind.ZodUnion:
+      return generateInitialData(schema._def.options[0]);
     default:
       console.error(`Unsupported schema type: ${schema._def.typeName}`);
       return undefined;

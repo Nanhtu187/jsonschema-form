@@ -1,54 +1,98 @@
 {
   "type": "object",
+  "$def": {
+    "child": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 10
+        },
+        "age": {
+          "type": "number"
+        }
+      }
+    }
+  },
   "properties": {
     "name": {
       "type": "string",
-      "default": "Nguyen Anh Tu"
+      "minLength": 3,
+      "maxLength": 10
     },
     "age": {
       "type": "number",
-      "default": 21
+      "minimum": 18,
+      "maximum": 100
+    },
+    "isTall": {
+      "type": "boolean"
     },
     "address": {
-      "type": "object",
-      "properties": {
-        "country": {
-          "allOf": [
-            {
-              "type": "string",
-              "default": "Viet Nam"
-            },
-            {
-              "description": "Country",
-              "minLength": 3,
-              "maxLength": 20
-            }
-          ]
-        },
-        "province": {
-          "type": "string",
-          "default": "Hung Yen"
-        },
-        "city" : {
-          "type": "string",
-          "default": "Hung Yen"
-        }
-      }
+      "$ref": "#"
     },
     "children": {
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "age": {
-            "type": "number",
-            "default": 21
-          }
-        }
+        "$ref": "#"
       }
+    },
+    "multipleTypeArray": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "number"
+        ]
+      }
+    },
+    "gender": {
+      "enum": [
+        "male",
+        "female"
+      ]
+    },
+    "anyOfExample": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        }
+      ]
+    },
+    "allOfExample": {
+      "allOf": [
+        {
+          "type": "string"
+        },
+        {
+          "maxLength": 5
+        }
+      ]
+    },
+    "oneOfExample": {
+      "type": "number",
+      "oneOf": [
+        {
+          "type": "number",
+          "multipleOf": 5
+        },
+        {
+          "type": "number",
+          "multipleOf": 3
+        }
+      ]
     }
-  }
+  },
+  "required": [
+    "name",
+    "age",
+    "isTall",
+    "address",
+    "children",
+    "multipleTypeArray"
+  ]
 }

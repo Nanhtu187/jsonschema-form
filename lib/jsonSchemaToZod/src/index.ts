@@ -1,2 +1,2 @@
 export * from "./pkg";
-export * from "./loadString";
+export * from "./load";

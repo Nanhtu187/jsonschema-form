@@ -3,6 +3,7 @@ import { ObjectTemplate } from "./objectTemplate";
 import { NumberTemplate } from "./numberTemplate";
 import { BooleanTemplate } from "./booleanTemplate";
 import { StringTemplate } from "./stringTemplate";
+import { SelectionTemplate } from "./selection";
 import { Templates } from "./type";
 
 export const BaseTemplates: Templates = {
@@ -11,4 +12,5 @@ export const BaseTemplates: Templates = {
   BooleanTemplate: BooleanTemplate,
   ObjectTemplate: ObjectTemplate,
   ArrayTemplate: ArrayTemplate,
+  SelectionTemplate: SelectionTemplate
 };

@@ -3,6 +3,7 @@ import { useErrorsAtPath, useFormDataAtPath } from "../..";
 import { ErrorsListTemplate } from "./errorsListTemplate";
 import React from "react";
 import { Checkbox, Form } from "antd";
+import { CheckboxChangeEvent } from "antd/es/checkbox";
 
 export const BooleanTemplate: React.FC<{
   schema: z.ZodBoolean;
@@ -12,7 +13,7 @@ export const BooleanTemplate: React.FC<{
 }> = ({ schema, path, liveValidate, title }) => {
   const [value, setValue] = useFormDataAtPath(path);
   const [errors, setErrorsAtPath] = useErrorsAtPath(path);
-  const onBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+  const onChange = (event: CheckboxChangeEvent) => {
     if (liveValidate) {
       try {
         schema.parse(event.target.checked);
@@ -22,6 +23,7 @@ export const BooleanTemplate: React.FC<{
         setErrorsAtPath(errors.issues);
       }
     }
+    setValue(event.target.checked)
   };
 
   return (
@@ -32,9 +34,8 @@ export const BooleanTemplate: React.FC<{
       colon={false}
     >
       <Checkbox
-        onChange={(e) => setValue(e.target.checked)}
+        onChange={(e) => onChange(e)}
         checked={value}
-        onBlur={onBlur}
       />
       {errors && <ErrorsListTemplate errors={errors} />}
     </Form.Item>

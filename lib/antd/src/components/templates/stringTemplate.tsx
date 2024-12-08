@@ -9,10 +9,11 @@ export const StringTemplate: React.FC<{
   path: string[];
   liveValidate?: boolean;
   title?: string;
-}> = ({ schema, path, liveValidate, title }) => {
+  isRequired: boolean;
+}> = ({ schema, path, liveValidate, title, isRequired }) => {
   const [value, setValue] = useFormDataAtPath(path);
   const [errors, setErrorsAtPath] = useErrorsAtPath(path);
-  const onBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (liveValidate) {
       try {
         schema.parse(event.target.value);
@@ -22,25 +23,25 @@ export const StringTemplate: React.FC<{
         setErrorsAtPath(errors.issues);
       }
     }
+    setValue(event.target.value);
+
   };
 
   return (
     <Form.Item<string>
+      validateStatus={(errors && errors.length > 0) ? "error" : ""}
       label={title}
       layout="vertical"
       wrapperCol={{ flex: 1 }}
       tooltip={schema.description}
+      required={isRequired}
     >
       <Input
-        onChange={(e) => {
-          setValue(e.target.value);
-        }}
+        onChange={(e) => onChange(e)}
         value={value || ""}
         type="text"
         placeholder={schema.description || ""}
-        onBlur={onBlur}
       />
-      {/*{schema.description && <small>{schema.description}</small>}*/}
       {errors && <ErrorsListTemplate errors={errors} />}
     </Form.Item>
   );

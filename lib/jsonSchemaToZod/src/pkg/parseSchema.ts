@@ -1,15 +1,8 @@
 import { ParserSelector, Refs, Schema } from "../types";
 import { z } from "zod";
-import { parseNull } from "./parseNull";
-import { parseBoolean } from "./parseBoolean";
-import { parseNumber } from "./parseNumber";
-import { parseString } from "./parseString";
+import { parseAllOf, parseAnyOf, parseArray, parseBoolean, parseEnum, parseMultipleType, parseNull, parseNumber, parseObject, parseOneOf, parseRef, parseString } from ".";
 import { JSONSchema7Definition, JSONSchema7Type } from "json-schema";
-import { parseObject } from "./parseObject";
-import { parseArray } from "./parseArray";
 import { State } from "../enum";
-import { parseRef } from "./parseRef";
-import { parseAllOf } from "./parseAllOf";
 
 export const parseSchema = (
   schema: Schema,
@@ -22,7 +15,7 @@ export const parseSchema = (
     if (seen.state === State.SUCCESS) {
       return seen.value;
     } else {
-      throw new Error("Circular reference detected");
+      throw new Error(`Circular reference detected at path: ${path}`);
     }
   }
   if (schema.$defs) {
@@ -55,20 +48,20 @@ const selectParser: ParserSelector = ({ schema, rootSchema, path, ref }) => {
     return parseArray({ schema, rootSchema, path, ref });
   } else if (its.a.ref(schema)) {
     return parseRef({ schema, rootSchema, path, ref });
-    // } else if (its.an.anyOf(schema)) {
-    //   return parseAnyOf(schema, refs);
+  } else if (its.an.anyOf(schema)) {
+    return parseAnyOf({ schema, rootSchema, path, ref });
   } else if (its.an.allOf(schema)) {
     return parseAllOf({ schema, rootSchema, path, ref });
-    // } else if (its.a.oneOf(schema)) {
-    //   return parseOneOf({ schema, rootSchema, path, ref });
+  } else if (its.a.oneOf(schema)) {
+    return parseOneOf({ schema, rootSchema, path, ref });
     // } else if (its.a.not(schema)) {
     //   return parseNot(schema, refs);
-    // } else if (its.an.enum(schema)) {
-    //   return parseEnum(schema); //<-- needs to come before primitives
+  } else if (its.an.enum(schema)) {
+    return parseEnum(schema); //<-- needs to come before primitives
     // } else if (its.a.const(schema)) {
     //   return parseConst(schema);
-    // } else if (its.a.multipleType(schema)) {
-    //   return parseMultipleType(schema, refs);
+  } else if (its.a.multipleType(schema)) {
+    return parseMultipleType({ schema, rootSchema, path, ref });
   } else if (its.a.primitive(schema, "string")) {
     return parseString(schema);
   } else if (
@@ -80,7 +73,6 @@ const selectParser: ParserSelector = ({ schema, rootSchema, path, ref }) => {
     return parseBoolean();
   } else {
     // if (its.a.primitive(schema, "null")) {
-    console.log(schema);
     return parseNull();
   }
   // } else if (its.a.conditional(schema)) {
@@ -115,9 +107,9 @@ export const its = {
     nullable: (x: Schema): x is Schema & { nullable: true } =>
       (x as any).nullable === true,
     ref: (x: Schema): x is Schema & { $ref: string } => x.$ref !== undefined,
-    // multipleType: (
-    //   x: JsonSchemaObject,
-    // ): x is JsonSchemaObject & { type: string[] } => Array.isArray(x.type),
+    multipleType: (
+      x: Schema,
+    ): x is Schema & { type: string[] } => Array.isArray(x.type),
     // not: (
     //   x: JsonSchemaObject,
     // ): x is JsonSchemaObject & {

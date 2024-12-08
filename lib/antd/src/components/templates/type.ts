@@ -21,11 +21,13 @@ export type Templates = {
     schema: z.ZodString | z.ZodDate;
     path: string[];
     liveValidate?: boolean;
+    isRequired: boolean;
   }>;
   NumberTemplate: React.FC<{
     schema: z.ZodNumber;
     path: string[];
     liveValidate?: boolean;
+    isRequired: boolean;
   }>;
   BooleanTemplate: React.FC<{
     schema: z.ZodBoolean;
@@ -36,11 +38,18 @@ export type Templates = {
     schema: z.ZodObject<any>;
     path: string[];
     liveValidate?: boolean;
+    isRequired: boolean;
   }>;
   ArrayTemplate: React.FC<{
     schema: z.ZodArray<any>;
     path: string[];
     liveValidate?: boolean;
+  }>;
+  SelectionTemplate: React.FC<{
+    schema: z.ZodUnion<any>;
+    path: string[];
+    liveValidate?: boolean;
+    isRequired: boolean;
   }>;
 };
 
@@ -49,4 +58,5 @@ export interface RenderTemplateProps {
   path: string[];
   liveValidate?: boolean;
   title?: string;
+  isRequired?: boolean;
 }

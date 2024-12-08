@@ -480,3 +480,19 @@ export const zodSchemaBasic = z.object({
     .optional(),
   email: z.string().email().describe("The person's email address."),
 });
+
+export const schema = z.object({
+  name: z.string().min(3).max(10),
+  age: z.number().gte(18).lte(100),
+  isTall: z.boolean(),
+  address: z.object({
+    street: z.string(),
+    city: z.string(),
+  }),
+  children: z.array(
+    z.object({
+      name: z.string().min(3).max(10),
+      age: z.number(),
+    }),
+  ),
+});

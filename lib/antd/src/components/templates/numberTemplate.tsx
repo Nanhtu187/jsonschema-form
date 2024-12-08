@@ -9,36 +9,37 @@ export const NumberTemplate: React.FC<{
   path: string[];
   liveValidate?: boolean;
   title?: string;
-}> = ({ schema, path, liveValidate, title }) => {
+  isRequired: boolean;
+}> = ({ schema, path, liveValidate, title, isRequired }) => {
   const [value, setValue] = useFormDataAtPath(path);
   const [errors, setErrorsAtPath] = useErrorsAtPath(path);
-  const onBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (liveValidate) {
       try {
-        schema.parse(Number(event.target.value));
+        schema.parse(Number(e.target.value));
         setErrorsAtPath([]);
       } catch (validationErrors) {
         const errors = validationErrors as z.ZodError;
         setErrorsAtPath(errors.issues);
       }
     }
+    setValue(e.target.value ? Number(e.target.value) : null)
   };
 
   return (
-    <Form.Item<string>
+    <Form.Item<number>
       label={title}
+      validateStatus={(errors && errors.length > 0) ? "error" : ""}
       layout="vertical"
       wrapperCol={{ flex: 1 }}
       tooltip={schema.description}
+      required={isRequired}
     >
       <Input
-        onChange={(e) => {
-          setValue(e.target.value ? Number(e.target.value) : null);
-        }}
+        onChange={(e) => onChange(e)}
         value={value || ""}
         type="number"
         placeholder={schema.description || ""}
-        onBlur={onBlur}
       />
       {/*{schema.description && <small>{schema.description}</small>}*/}
       {errors && <ErrorsListTemplate errors={errors} />}
