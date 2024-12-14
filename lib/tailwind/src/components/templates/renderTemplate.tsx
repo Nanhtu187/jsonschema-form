@@ -16,7 +16,9 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
     BooleanTemplate,
     ObjectTemplate,
     ArrayTemplate,
+    SelectionTemplate
   } = useTemplates();
+  const isRequired = !schema.isOptional();
   const resolvedSchema = mapToPrimaryType(resolveSchema(schema));
   switch (resolvedSchema._def.typeName) {
     case z.ZodFirstPartyTypeKind.ZodString:
@@ -28,6 +30,7 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
           path={path}
           liveValidate={liveValidate}
           title={title}
+          isRequired={isRequired}
         />
       );
     case z.ZodFirstPartyTypeKind.ZodNumber:
@@ -37,6 +40,7 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
           path={path}
           liveValidate={liveValidate}
           title={title}
+          isRequired={isRequired}
         />
       );
     case z.ZodFirstPartyTypeKind.ZodBoolean:
@@ -60,6 +64,15 @@ export const RenderTemplate: React.FC<RenderTemplateProps> = ({
     case z.ZodFirstPartyTypeKind.ZodArray:
       return (
         <ArrayTemplate
+          schema={resolvedSchema}
+          path={path}
+          liveValidate={liveValidate}
+          title={title}
+        />
+      );
+    case z.ZodFirstPartyTypeKind.ZodUnion:
+      return (
+        <SelectionTemplate
           schema={resolvedSchema}
           path={path}
           liveValidate={liveValidate}

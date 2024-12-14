@@ -491,8 +491,21 @@ export const schema = z.object({
   }),
   children: z.array(
     z.object({
-      name: z.string().min(3).max(10),
-      age: z.number(),
+      name: z.string().min(3).max(10).optional(),
+      age: z.number().optional(),
     }),
   ),
+  enum: z.union([
+    z.object({
+      alkdjflasjfl: z.number(),
+      asdfasdfasdfadfasdfsaf: z.string(),
+    }),
+    z.number(),
+    z.string(),
+    z.object({
+      abc: z.number(),
+      def: z.string(),
+    }),
+  ]),
+  asdf: z.union([z.literal("Asdf"), z.literal(1), z.literal("true")]),
 });

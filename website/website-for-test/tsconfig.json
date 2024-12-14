@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "composite": true,
-    "noEmit": false,
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": [

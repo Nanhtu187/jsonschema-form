@@ -7,3 +7,4 @@ export * from "./renderTemplate";
 export * from "./BaseTemplate";
 export * from "./errorsListTemplate";
 export * from "./type";
+export * from "./selectionTemplate";

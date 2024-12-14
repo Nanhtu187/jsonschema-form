@@ -20,7 +20,7 @@ export const ObjectTemplate: React.FC<{
   return (
     <div className="mb-4">
       <div
-        className="flex justify-between items-center cursor-pointer p-2 border-b"
+        className="flex items-center justify-between p-2 border-b cursor-pointer"
         onClick={toggleAccordion}
       >
         {title && (
@@ -33,7 +33,7 @@ export const ObjectTemplate: React.FC<{
         </button>
       </div>
       {isOpen && (
-        <div className="mt-2 p-2 border rounded-md">
+        <div className="p-2 mt-2 border rounded-md">
           {schema.description && (
             <small className="block mb-2 text-gray-500 dark:text-gray-400">
               {schema.description}
@@ -41,7 +41,7 @@ export const ObjectTemplate: React.FC<{
           )}
           {errors && <ErrorsListTemplate errors={errors} />}
           {schema.shape &&
-            Object.keys(schema.shape).map((key) => (
+            Object.keys(schema.shape).map((key) =>
               <RenderTemplate
                 key={key}
                 schema={schema.shape[key]}
@@ -49,7 +49,7 @@ export const ObjectTemplate: React.FC<{
                 liveValidate={liveValidate}
                 title={_.startCase(key)}
               />
-            ))}
+            )}
         </div>
       )}
     </div>

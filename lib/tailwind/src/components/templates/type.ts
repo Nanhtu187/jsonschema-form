@@ -21,11 +21,14 @@ export type Templates = {
     schema: z.ZodString | z.ZodDate;
     path: string[];
     liveValidate?: boolean;
+    isRequired?: boolean;
+
   }>;
   NumberTemplate: React.FC<{
     schema: z.ZodNumber;
     path: string[];
     liveValidate?: boolean;
+    isRequired?: boolean;
   }>;
   BooleanTemplate: React.FC<{
     schema: z.ZodBoolean;
@@ -39,6 +42,11 @@ export type Templates = {
   }>;
   ArrayTemplate: React.FC<{
     schema: z.ZodArray<any>;
+    path: string[];
+    liveValidate?: boolean;
+  }>;
+  SelectionTemplate: React.FC<{
+    schema: z.ZodUnion<any>;
     path: string[];
     liveValidate?: boolean;
   }>;

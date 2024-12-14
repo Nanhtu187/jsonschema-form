@@ -1,40 +1,30 @@
 import { useState } from "react";
 import { Form } from "@nanhtu/antd";
-import { schema } from "./schema";
+import { loadFile } from "@nanhtu/jsonschematozod";
+import { z } from "zod";
 
 export const AntdExample = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [liveValidate, setLiveValidate] = useState(false);
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  const [liveValidate] = useState(false);
+  const [currentSchema, setCurrentSchema] = useState<z.ZodTypeAny>();
   return (
     <div style={{ padding: "40px" }}>
-      <div className={isDarkMode ? "dark" : ""}>
-        <div>
-          <button onClick={toggleDarkMode} className="">
-            Toggle Dark Mode
-          </button>
-        </div>
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              checked={liveValidate}
-              onChange={() => setLiveValidate(!liveValidate)}
-            />
-            Live Validate
-          </label>
-        </div>
+      <input type="file" onChange={async (e) => {
+        if (e.currentTarget.files) {
+          const newSchema = await loadFile(e.currentTarget.files[0]);
+          setCurrentSchema(newSchema);
+        }
+      }
+      }></input>
+      {currentSchema &&
         <Form
-          schema={schema}
+          schema={currentSchema}
           onSubmit={(data: any) =>
             alert("Data submitted: " + JSON.stringify(data, null, 2))
           }
           onError={(errors: any) => console.error("Zod:", errors)}
           liveValidate={liveValidate}
         />
-      </div>
+      }
     </div>
   );
 };

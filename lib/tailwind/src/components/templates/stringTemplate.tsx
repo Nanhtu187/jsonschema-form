@@ -8,7 +8,8 @@ export const StringTemplate: React.FC<{
   path: string[];
   liveValidate?: boolean;
   title?: string;
-}> = ({ schema, path, liveValidate, title }) => {
+  isRequired?: boolean;
+}> = ({ schema, path, liveValidate, title, isRequired }) => {
   const [value, setValue] = useFormDataAtPath(path);
   const [errors, setErrorsAtPath] = useErrorsAtPath(path);
   const onBlur = (event: React.FocusEvent<HTMLInputElement>) => {
@@ -27,7 +28,8 @@ export const StringTemplate: React.FC<{
     <div className="mb-4">
       {title && (
         <label className="block text-sm font-medium text-gray-700 dark:text-white">
-          {title}
+          <span>{title}</span>
+          {isRequired && <span style={{ color: 'red' }}>*</span>}
         </label>
       )}
       <input

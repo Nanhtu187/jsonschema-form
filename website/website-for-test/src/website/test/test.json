@@ -22,69 +22,91 @@
       "maxLength": 10
     },
     "age": {
-      "type": "number",
-      "minimum": 18,
-      "maximum": 100
+      "type": "number"
     },
     "isTall": {
       "type": "boolean"
     },
     "address": {
-      "$ref": "#"
+      "type": "object",
+      "properties": {
+        "street": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "zip": {
+          "type": "string"
+        }
+      }
+    },
+    "sdt": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string",
+      "enum": [
+        "Vietnam",
+        "USA",
+        "Japan"
+      ]
     },
     "children": {
       "type": "array",
       "items": {
-        "$ref": "#"
+        "type": "string"
       }
     },
-    "multipleTypeArray": {
-      "type": "array",
-      "items": {
-        "type": [
-          "string",
-          "number"
-        ]
-      }
+    "email": {
+      "type": "string",
+      "format": "email"
     },
-    "gender": {
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "time": {
+      "type": "string",
+      "format": "time"
+    },
+    "dateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "parent": {
+      "$ref": "#/$def/child"
+    },
+    "school": {
+      "type": "string"
+    },
+    "isGraduted": {
+      "type": "boolean"
+    },
+    "class": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "city": {
       "enum": [
-        "male",
-        "female"
+        "Hanoi",
+        "HCM",
+        "Da Nang"
       ]
     },
-    "anyOfExample": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "number"
-        }
-      ]
+    "zip": {
+      "type": "string"
     },
-    "allOfExample": {
-      "allOf": [
-        {
-          "type": "string"
-        },
-        {
-          "maxLength": 5
-        }
-      ]
+    "phone": {
+      "type": "string"
     },
-    "oneOfExample": {
-      "type": "number",
-      "oneOf": [
-        {
-          "type": "number",
-          "multipleOf": 5
-        },
-        {
-          "type": "number",
-          "multipleOf": 3
-        }
-      ]
+    "fax": {
+      "type": "string"
     }
   },
   "required": [
@@ -92,7 +114,6 @@
     "age",
     "isTall",
     "address",
-    "children",
-    "multipleTypeArray"
+    "children"
   ]
 }

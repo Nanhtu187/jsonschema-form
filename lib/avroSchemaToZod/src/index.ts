@@ -1,1 +1,1 @@
-export * from "./loadString";
+export * from "./load";

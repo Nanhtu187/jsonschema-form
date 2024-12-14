@@ -27,7 +27,7 @@ export const BooleanTemplate: React.FC<{
     <div className="mb-4">
       <div className="flex items-center">
         {title && (
-          <label className="block text-sm font-medium text-gray-700 dark:text-white mr-2">
+          <label className="block mr-2 text-sm font-medium text-gray-700 dark:text-white">
             {title}
           </label>
         )}
@@ -36,7 +36,7 @@ export const BooleanTemplate: React.FC<{
           checked={value}
           type="checkbox"
           onBlur={onBlur}
-          className="form-checkbox h-5 w-5 text-blue-600"
+          className="w-5 h-5 text-blue-600 form-checkbox"
         />
       </div>
       {schema.description && (

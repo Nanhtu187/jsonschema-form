@@ -29,31 +29,31 @@ export const createFormProviderAndHooks = (
     renderTemplate = BaseRenderTemplate,
     readonly = false,
   }) => {
-    const storeRef = useRef<FormStore>();
-    if (!storeRef.current) {
-      storeRef.current = createFormStore(
-        initialData,
-        schema,
-        readonly,
-        generateInitialData,
+      const storeRef = useRef<FormStore>();
+      if (!storeRef.current) {
+        storeRef.current = createFormStore(
+          initialData,
+          schema,
+          readonly,
+          generateInitialData,
+        );
+      }
+
+      if (!templates) {
+        console.error("No template provided");
+        return <div>No template provided</div>;
+      }
+
+      return (
+        <FormContext.Provider value={storeRef.current}>
+          <TemplatesContext.Provider value={templates}>
+            <RenderTemplateContext.Provider value={renderTemplate}>
+              {children}
+            </RenderTemplateContext.Provider>
+          </TemplatesContext.Provider>
+        </FormContext.Provider>
       );
-    }
-
-    if (!templates) {
-      console.error("No template provided");
-      return <div>No template provided</div>;
-    }
-
-    return (
-      <FormContext.Provider value={storeRef.current}>
-        <TemplatesContext.Provider value={templates}>
-          <RenderTemplateContext.Provider value={renderTemplate}>
-            {children}
-          </RenderTemplateContext.Provider>
-        </TemplatesContext.Provider>
-      </FormContext.Provider>
-    );
-  };
+    };
 
   const useFormContext = <T,>(selector: (state: FormState) => T): T => {
     const store = useContext(FormContext);
@@ -69,7 +69,7 @@ export const createFormProviderAndHooks = (
   ): [any, (value: any) => void] => {
     const formData = useFormContext((state) => state.formData);
     const value =
-      path.reduce((acc, key) => acc[key], formData) ?? defaultOnNull;
+      path.reduce((acc, key) => (acc ?? {})[key], formData) ?? defaultOnNull;
     const setFormData = useFormContext((state) => state.setFormData);
     const setValue = (value: any) => setFormData(path, value);
     return [value, setValue];

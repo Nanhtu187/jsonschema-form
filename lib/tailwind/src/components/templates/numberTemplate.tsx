@@ -8,6 +8,7 @@ export const NumberTemplate: React.FC<{
   path: string[];
   liveValidate?: boolean;
   title?: string;
+  isRequired?: boolean;
 }> = ({ schema, path, liveValidate, title }) => {
   const [value, setValue] = useFormDataAtPath(path);
   const [errors, setErrorsAtPath] = useErrorsAtPath(path);
